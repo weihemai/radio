@@ -1,0 +1,130 @@
+:root{
+  --bg:#0a0a0a; --panel:#121212; --tile:#181818; --tile-hover:#232323;
+  --accent:#1db954; --text:#ffffff; --text-dim:#a7a7a7; --line:#282828;
+}
+[data-theme="light"]{
+  --bg:#f5f5f5; --panel:#ffffff; --tile:#eeeeee; --tile-hover:#e2e2e2;
+  --accent:#1db954; --text:#111111; --text-dim:#5a5a5a; --line:#dcdcdc;
+}
+*{ box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--text);
+  font-family:'Helvetica Neue',system-ui,sans-serif; overflow:hidden; }
+.app{ display:flex; flex-direction:column; height:100vh; width:100vw; position:relative; }
+
+.topbar{ display:flex; align-items:center; justify-content:space-between; padding:16px 24px 0 24px; flex:none; }
+.header-progress-track{ height:3px; background:var(--tile); flex:none; margin:8px 24px 0 24px; border-radius:3px; overflow:hidden; display:none; }
+.header-progress-bar{ height:100%; width:30%; background:var(--accent); animation: indeterminateMove 1.1s ease-in-out infinite; }
+@keyframes indeterminateMove{ 0%{ margin-left:-30%; } 100%{ margin-left:100%; } }
+
+.backbtn{ font-size:22px; font-weight:800; color:var(--accent); background:var(--tile); border:none; display:none; align-items:center; gap:10px; cursor:pointer; padding:12px 22px; border-radius:14px; }
+.backbtn svg{ width:26px; height:26px; stroke:var(--accent); fill:none; stroke-width:2.4; }
+.backbtn.show{ display:flex; }
+.clock{ font-size:20px; font-weight:700; text-align:center; display:flex; flex-direction:column; }
+.clock .tz{ font-size:11px; color:var(--text-dim); font-weight:400; }
+.settingsbtn{ width:40px; height:40px; border-radius:50%; background:var(--tile); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.settingsbtn svg{ width:20px; height:20px; stroke:var(--text); fill:none; stroke-width:1.6; }
+
+.content{ flex:1; padding:16px 24px 0 24px; display:flex; flex-direction:column; gap:14px; min-height:0; overflow:hidden; position:relative; }
+.section-label{ font-size:13px; text-transform:uppercase; letter-spacing:2px; color:var(--text-dim); font-weight:700; }
+
+[data-fontsize="small"]{ font-size:14px; }
+[data-fontsize="medium"]{ font-size:16px; }
+[data-fontsize="large"]{ font-size:19px; }
+[data-fontsize="small"] .tile .label{ font-size:15px; }
+[data-fontsize="large"] .tile .label{ font-size:21px; }
+[data-fontsize="small"] .player .station{ font-size:19px; }
+[data-fontsize="large"] .player .station{ font-size:25px; }
+[data-fontsize="small"] .stile .sname{ font-size:15px; }
+[data-fontsize="large"] .stile .sname{ font-size:19px; }
+
+/* Favorites: fixed-height row, native horizontal smooth scroll+snap
+   instead of paged swiping. Exactly 6 tile-widths visible at once;
+   more items scroll smoothly, no page numbers/dots needed. */
+.fav-wrap{ flex:none; }
+.fav-scroll{ overflow-x:auto; overflow-y:hidden; scroll-behavior:smooth; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
+.fav-scroll::-webkit-scrollbar{ display:none; }
+.fav-row{ display:flex; gap:12px; height:104px; }
+.fav-tile{ background:var(--tile); border-radius:14px; padding:8px; display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; justify-content:center; position:relative;
+  flex:0 0 calc((100% - 5*12px)/6); scroll-snap-align:start; }
+.fav-tile:active{ transform:scale(.97); }
+.fav-tile img{ width:38px; height:38px; border-radius:8px; object-fit:cover; background:#000; }
+.fav-tile .flabel{ font-size:13px; font-weight:700; text-align:center; line-height:1.15; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }
+.fav-empty{ height:104px; display:flex; align-items:center; color:var(--text-dim); font-size:14px; padding:0 4px; }
+
+/* Home grid: fixed 3x3 layout that only reacts to window/container size,
+   never to transient content changes elsewhere (loading state now lives
+   in the header, not in this flex flow). */
+.home-grid{ display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); gap:16px; flex:1; min-height:0; }
+
+.tile{ background:var(--tile); border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:8px; padding:8px; cursor:pointer; border:1px solid transparent; transition:background .15s, transform .08s; position:relative; overflow:hidden; }
+.tile:hover{ background:var(--tile-hover); }
+.tile:active{ transform:scale(0.97); }
+.tile .icon{ width:32px; height:32px; }
+.tile .icon svg{ width:100%; height:100%; stroke:var(--accent); fill:none; stroke-width:1.6; }
+.tile .label{ font-size:18px; font-weight:700; text-align:center; line-height:1.15; }
+
+.stile{ background:var(--tile); border-radius:14px; padding:12px; display:flex; align-items:center; gap:12px; cursor:pointer; }
+.stile:active{ transform:scale(.98); }
+.stile img{ width:52px; height:52px; border-radius:10px; object-fit:cover; flex:none; background:#000; }
+.stile .sinfo{ min-width:0; flex:1; }
+.stile .sname{ font-size:17px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stile .stags{ font-size:11px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+.search-wrap{ flex:none; display:flex; align-items:center; gap:14px; background:var(--tile); border-radius:18px; padding:14px 22px; }
+.search-wrap svg{ width:28px; height:28px; stroke:var(--text-dim); fill:none; stroke-width:2; flex:none; }
+.search-wrap input{ flex:1; background:none; border:none; outline:none; color:var(--text); font-size:22px; font-weight:600; font-family:inherit; }
+.search-wrap input::placeholder{ color:var(--text-dim); font-weight:400; }
+
+/* Results: native smooth-scrolling container. No pagination UI eating
+   layout space — the grid holds every item and the browser scrolls it
+   (touch swipe + mouse wheel both work naturally, with smooth easing). */
+.results-wrap{ flex:1; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
+.results-scroll{ flex:1; overflow-y:auto; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; }
+.results-grid{ display:grid; grid-template-columns:repeat(3,1fr); grid-auto-rows:96px; gap:12px; padding-bottom:8px; }
+
+.breadcrumb{ font-size:14px; color:var(--text-dim); display:flex; gap:6px; flex-wrap:wrap; flex:none; }
+.breadcrumb span{ cursor:pointer; }
+.breadcrumb span.current{ color:var(--text); font-weight:700; cursor:default; }
+.breadcrumb .sep{ color:var(--line); cursor:default; }
+
+.error-box{ text-align:center; color:#ff6b6b; font-size:16px; padding:20px; flex:none; }
+
+.source-note{ font-size:12px; color:var(--text-dim); line-height:1.4; }
+.panel button.danger{ background:#e2001a; border:none; color:#fff; font-weight:700; padding:12px; border-radius:10px; cursor:pointer; font-size:15px; }
+.confirm-box{ display:flex; flex-direction:column; gap:10px; background:var(--tile); border-radius:12px; padding:14px; }
+.confirm-actions{ display:flex; gap:10px; }
+.confirm-actions button{ flex:1; padding:10px; border-radius:8px; border:none; cursor:pointer; font-weight:700; font-size:14px; }
+.confirm-actions .seg-btn{ background:var(--panel); color:var(--text); border:1px solid var(--line); }
+
+.player{ flex:none; margin:14px 24px 18px 24px; background:var(--panel); border:1px solid var(--line);
+  border-radius:20px; padding:14px 20px; display:flex; align-items:center; gap:16px; cursor:pointer; }
+.player:active{ transform:scale(.995); }
+.player .art{ width:64px; height:64px; border-radius:12px; background:linear-gradient(135deg,var(--accent),#0a3d1f); flex:none; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.player .art img{ width:100%; height:100%; object-fit:cover; }
+.player .art svg{ width:26px; height:26px; fill:#fff; }
+.player .meta{ flex:1; min-width:0; }
+.player .station{ font-size:22px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.player .status{ font-size:15px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.player .localtime{ font-size:13px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.starbtn{ width:56px; height:56px; border-radius:50%; border:none; background:var(--tile); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+.starbtn svg{ width:26px; height:26px; stroke:var(--accent); fill:none; stroke-width:1.8; }
+.starbtn.active svg{ fill:var(--accent); }
+.playicon{ width:56px; height:56px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; flex:none; }
+.playicon svg{ width:24px; height:24px; fill:#0a0a0a; }
+
+.overlay{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:100; }
+.overlay.show{ display:flex; }
+.panel{ background:var(--panel); border-radius:20px; padding:26px; width:380px; max-width:90vw; display:flex; flex-direction:column; gap:18px; border:1px solid var(--line); }
+.panel h3{ margin:0; font-size:20px; }
+.row{ display:flex; align-items:center; justify-content:space-between; }
+.seg{ display:flex; background:var(--tile); border-radius:10px; overflow:hidden; }
+.seg button{ border:none; background:none; color:var(--text-dim); padding:8px 16px; font-weight:700; cursor:pointer; }
+.seg button.active{ background:var(--accent); color:#0a0a0a; }
+.switch{ width:46px; height:26px; border-radius:20px; background:var(--tile); position:relative; cursor:pointer; }
+.switch .knob{ width:20px; height:20px; border-radius:50%; background:var(--text-dim); position:absolute; top:3px; left:3px; transition:left .15s; }
+.switch.on{ background:var(--accent); }
+.switch.on .knob{ left:23px; background:#0a0a0a; }
+.panel input[type=text]{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:var(--tile); color:var(--text); font-size:15px; }
+.panel button.primary{ background:var(--accent); border:none; color:#0a0a0a; font-weight:700; padding:12px; border-radius:10px; cursor:pointer; font-size:15px; }
+.closebtn{ background:none; border:none; color:var(--text-dim); font-size:14px; cursor:pointer; align-self:flex-end; }
