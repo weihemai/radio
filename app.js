@@ -134,7 +134,7 @@ function resetIdleTimer(){
   if(idleTimer) clearTimeout(idleTimer);
   idleTimer = setTimeout(()=>{
     if(navStack.length>0 || document.getElementById('searchWrap').style.display==='flex') goHome();
-  }, 10000);
+  }, 20000);
 }
 ['click','touchstart','touchmove','keydown'].forEach(evt=>{
   document.getElementById('app').addEventListener(evt, resetIdleTimer);

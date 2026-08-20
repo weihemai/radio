@@ -38,8 +38,8 @@ html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--t
 [data-fontsize="small"]{ font-size:16px; }
 [data-fontsize="medium"]{ font-size:18px; }
 [data-fontsize="large"]{ font-size:21px; }
-[data-fontsize="small"] .tile .label{ font-size:14px; }
-[data-fontsize="large"] .tile .label{ font-size:18px; }
+[data-fontsize="small"] .tile .label{ font-size:18px; }
+[data-fontsize="large"] .tile .label{ font-size:24px; }
 [data-fontsize="small"] .player .station{ font-size:24px; }
 [data-fontsize="large"] .player .station{ font-size:30px; }
 [data-fontsize="small"] .stile .sname{ font-size:26px; }
@@ -70,9 +70,9 @@ html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--t
   gap:6px; padding:6px; cursor:pointer; border:1px solid transparent; transition:background .15s, transform .08s; position:relative; overflow:hidden; min-height:0; }
 .tile:hover{ background:var(--tile-hover); }
 .tile:active{ transform:scale(0.97); }
-.tile .icon{ width:26px; height:26px; }
+.tile .icon{ width:42px; height:42px; }
 .tile .icon svg{ width:100%; height:100%; stroke:var(--accent); fill:none; stroke-width:1.6; }
-.tile .label{ font-size:16px; font-weight:700; text-align:center; line-height:1.15; }
+.tile .label{ font-size:21px; font-weight:700; text-align:center; line-height:1.15; }
 
 .stile{ background:var(--tile); border-radius:14px; padding:14px; display:flex; align-items:center; gap:14px; cursor:pointer; min-width:0; }
 .stile:active{ transform:scale(.98); }

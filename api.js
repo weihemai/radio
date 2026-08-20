@@ -161,17 +161,18 @@ async function getCountries(){
 }
 
 async function getTags(){
-  // No `limit` param: the endpoint's limit truncates the alphabetically-sorted
-  // list server-side, which previously caused only "A-D" style partial
-  // results. We fetch the full tag list and do our own filtering/sorting.
-  const raw = await apiFetch('/json/tags?limit=0');
+  // No `limit` param at all: sending limit=0 actually means "return zero
+  // rows" on this API (it's SQL-backed), which was silently emptying the
+  // Genre/Music screen. Omitting the param lets the server use its own
+  // default, which returns the full tag list.
+  const raw = await apiFetch('/json/tags');
   return raw
     .filter(t => t.name && t.stationcount > 3)
     .sort((a,b)=> b.stationcount - a.stationcount);
 }
 
 async function getLanguages(){
-  const raw = await apiFetch('/json/languages?limit=0');
+  const raw = await apiFetch('/json/languages');
   return raw
     .filter(l => l.name && l.stationcount > 3)
     .sort((a,b)=> b.stationcount - a.stationcount);
