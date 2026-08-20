@@ -19,61 +19,67 @@ html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--t
 .backbtn{ font-size:22px; font-weight:800; color:var(--accent); background:var(--tile); border:none; display:none; align-items:center; gap:10px; cursor:pointer; padding:12px 22px; border-radius:14px; }
 .backbtn svg{ width:26px; height:26px; stroke:var(--accent); fill:none; stroke-width:2.4; }
 .backbtn.show{ display:flex; }
-.clock{ font-size:20px; font-weight:700; text-align:center; display:flex; flex-direction:column; }
-.clock .tz{ font-size:11px; color:var(--text-dim); font-weight:400; }
-.settingsbtn{ width:40px; height:40px; border-radius:50%; background:var(--tile); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; }
-.settingsbtn svg{ width:20px; height:20px; stroke:var(--text); fill:none; stroke-width:1.6; }
+.apptitle{ font-size:16px; font-weight:700; color:var(--text-dim); letter-spacing:0.5px; }
+.apptitle .appversion{ font-size:12px; font-weight:400; color:var(--text-dim); opacity:.7; }
+.apptitle.hide{ display:none; }
+.clock{ font-size:42px; font-weight:800; text-align:center; display:flex; flex-direction:column; line-height:1.05; }
+.clock .tz{ font-size:14px; color:var(--text-dim); font-weight:500; }
+.settingsbtn{ width:44px; height:44px; border-radius:50%; background:var(--tile); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.settingsbtn svg{ width:22px; height:22px; stroke:var(--text); fill:none; stroke-width:1.6; }
 
-.content{ flex:1; padding:16px 24px 0 24px; display:flex; flex-direction:column; gap:14px; min-height:0; overflow:hidden; position:relative; }
-.section-label{ font-size:13px; text-transform:uppercase; letter-spacing:2px; color:var(--text-dim); font-weight:700; }
+.content{ flex:1; padding:16px 24px 0 24px; display:flex; flex-direction:column; gap:16px; min-height:0; overflow:hidden; position:relative; }
+.section-label{ font-size:16px; text-transform:uppercase; letter-spacing:2px; color:var(--text-dim); font-weight:700; }
 
-[data-fontsize="small"]{ font-size:14px; }
-[data-fontsize="medium"]{ font-size:16px; }
-[data-fontsize="large"]{ font-size:19px; }
-[data-fontsize="small"] .tile .label{ font-size:15px; }
-[data-fontsize="large"] .tile .label{ font-size:21px; }
-[data-fontsize="small"] .player .station{ font-size:19px; }
-[data-fontsize="large"] .player .station{ font-size:25px; }
-[data-fontsize="small"] .stile .sname{ font-size:15px; }
-[data-fontsize="large"] .stile .sname{ font-size:19px; }
+[data-fontsize="small"]{ font-size:16px; }
+[data-fontsize="medium"]{ font-size:18px; }
+[data-fontsize="large"]{ font-size:21px; }
+[data-fontsize="small"] .tile .label{ font-size:19px; }
+[data-fontsize="large"] .tile .label{ font-size:25px; }
+[data-fontsize="small"] .player .station{ font-size:24px; }
+[data-fontsize="large"] .player .station{ font-size:30px; }
+[data-fontsize="small"] .stile .sname{ font-size:18px; }
+[data-fontsize="large"] .stile .sname{ font-size:23px; }
+[data-fontsize="small"] .fav-tile .flabel{ font-size:17px; }
+[data-fontsize="large"] .fav-tile .flabel{ font-size:22px; }
 
-/* Favorites: fixed-height row, native horizontal smooth scroll+snap
-   instead of paged swiping. Exactly 6 tile-widths visible at once;
-   more items scroll smoothly, no page numbers/dots needed. */
+/* Favorites: large SQUARE tiles, native horizontal smooth scroll+snap.
+   Sized relative to viewport height so they stay big and legible while
+   still leaving enough room for the results grid and player below. */
 .fav-wrap{ flex:none; }
 .fav-scroll{ overflow-x:auto; overflow-y:hidden; scroll-behavior:smooth; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
 .fav-scroll::-webkit-scrollbar{ display:none; }
-.fav-row{ display:flex; gap:12px; height:104px; }
-.fav-tile{ background:var(--tile); border-radius:14px; padding:8px; display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; justify-content:center; position:relative;
-  flex:0 0 calc((100% - 5*12px)/6); scroll-snap-align:start; }
+.fav-row{ display:flex; gap:14px; height:16vh; min-height:120px; max-height:170px; }
+.fav-tile{ background:var(--tile); border-radius:16px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; justify-content:center; position:relative;
+  aspect-ratio:1/1; height:100%; flex:0 0 auto; scroll-snap-align:start; }
 .fav-tile:active{ transform:scale(.97); }
-.fav-tile img{ width:38px; height:38px; border-radius:8px; object-fit:cover; background:#000; }
-.fav-tile .flabel{ font-size:13px; font-weight:700; text-align:center; line-height:1.15; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }
-.fav-empty{ height:104px; display:flex; align-items:center; color:var(--text-dim); font-size:14px; padding:0 4px; }
+.fav-tile img{ width:44%; height:44%; border-radius:10px; object-fit:cover; background:#000; }
+.fav-tile .flabel{ font-size:19px; font-weight:800; text-align:center; line-height:1.15; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }
+.fav-empty{ height:16vh; min-height:120px; display:flex; align-items:center; color:var(--text-dim); font-size:16px; padding:0 4px; }
 
-/* Home grid: fixed 3x3 layout that only reacts to window/container size,
-   never to transient content changes elsewhere (loading state now lives
-   in the header, not in this flex flow). */
-.home-grid{ display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); gap:16px; flex:1; min-height:0; }
+/* Home grid: fixed 3x3 layout that only reacts to window/container size.
+   min-height:0 on both the grid AND its tiles prevents any tile's
+   intrinsic content size from inflating a row beyond its fair share,
+   which is what could previously push the player off-screen. */
+.home-grid{ display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3, minmax(0,1fr)); gap:16px; flex:1; min-height:0; }
 
 .tile{ background:var(--tile); border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:8px; padding:8px; cursor:pointer; border:1px solid transparent; transition:background .15s, transform .08s; position:relative; overflow:hidden; }
+  gap:10px; padding:8px; cursor:pointer; border:1px solid transparent; transition:background .15s, transform .08s; position:relative; overflow:hidden; min-height:0; }
 .tile:hover{ background:var(--tile-hover); }
 .tile:active{ transform:scale(0.97); }
-.tile .icon{ width:32px; height:32px; }
+.tile .icon{ width:38px; height:38px; }
 .tile .icon svg{ width:100%; height:100%; stroke:var(--accent); fill:none; stroke-width:1.6; }
-.tile .label{ font-size:18px; font-weight:700; text-align:center; line-height:1.15; }
+.tile .label{ font-size:22px; font-weight:700; text-align:center; line-height:1.15; }
 
-.stile{ background:var(--tile); border-radius:14px; padding:12px; display:flex; align-items:center; gap:12px; cursor:pointer; }
+.stile{ background:var(--tile); border-radius:14px; padding:14px; display:flex; align-items:center; gap:14px; cursor:pointer; }
 .stile:active{ transform:scale(.98); }
-.stile img{ width:52px; height:52px; border-radius:10px; object-fit:cover; flex:none; background:#000; }
+.stile img{ width:56px; height:56px; border-radius:10px; object-fit:cover; flex:none; background:#000; }
 .stile .sinfo{ min-width:0; flex:1; }
-.stile .sname{ font-size:17px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.stile .stags{ font-size:11px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stile .sname{ font-size:20px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stile .stags{ font-size:14px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-.search-wrap{ flex:none; display:flex; align-items:center; gap:14px; background:var(--tile); border-radius:18px; padding:14px 22px; }
-.search-wrap svg{ width:28px; height:28px; stroke:var(--text-dim); fill:none; stroke-width:2; flex:none; }
-.search-wrap input{ flex:1; background:none; border:none; outline:none; color:var(--text); font-size:22px; font-weight:600; font-family:inherit; }
+.search-wrap{ flex:none; display:flex; align-items:center; gap:14px; background:var(--tile); border-radius:18px; padding:16px 22px; }
+.search-wrap svg{ width:30px; height:30px; stroke:var(--text-dim); fill:none; stroke-width:2; flex:none; }
+.search-wrap input{ flex:1; background:none; border:none; outline:none; color:var(--text); font-size:26px; font-weight:600; font-family:inherit; }
 .search-wrap input::placeholder{ color:var(--text-dim); font-weight:400; }
 
 /* Results: native smooth-scrolling container. No pagination UI eating
@@ -81,9 +87,9 @@ html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--t
    (touch swipe + mouse wheel both work naturally, with smooth easing). */
 .results-wrap{ flex:1; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
 .results-scroll{ flex:1; overflow-y:auto; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; }
-.results-grid{ display:grid; grid-template-columns:repeat(3,1fr); grid-auto-rows:96px; gap:12px; padding-bottom:8px; }
+.results-grid{ display:grid; grid-template-columns:repeat(3,1fr); grid-auto-rows:104px; gap:14px; padding-bottom:8px; }
 
-.breadcrumb{ font-size:14px; color:var(--text-dim); display:flex; gap:6px; flex-wrap:wrap; flex:none; }
+.breadcrumb{ font-size:17px; color:var(--text-dim); display:flex; gap:8px; flex-wrap:wrap; flex:none; font-weight:600; }
 .breadcrumb span{ cursor:pointer; }
 .breadcrumb span.current{ color:var(--text); font-weight:700; cursor:default; }
 .breadcrumb .sep{ color:var(--line); cursor:default; }
@@ -97,21 +103,21 @@ html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--t
 .confirm-actions button{ flex:1; padding:10px; border-radius:8px; border:none; cursor:pointer; font-weight:700; font-size:14px; }
 .confirm-actions .seg-btn{ background:var(--panel); color:var(--text); border:1px solid var(--line); }
 
-.player{ flex:none; margin:14px 24px 18px 24px; background:var(--panel); border:1px solid var(--line);
-  border-radius:20px; padding:14px 20px; display:flex; align-items:center; gap:16px; cursor:pointer; }
+.player{ flex:none; margin:14px 24px 20px 24px; background:var(--panel); border:1px solid var(--line);
+  border-radius:22px; padding:18px 22px; display:flex; align-items:center; gap:18px; cursor:pointer; min-height:96px; }
 .player:active{ transform:scale(.995); }
-.player .art{ width:64px; height:64px; border-radius:12px; background:linear-gradient(135deg,var(--accent),#0a3d1f); flex:none; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.player .art{ width:72px; height:72px; border-radius:14px; background:linear-gradient(135deg,var(--accent),#0a3d1f); flex:none; display:flex; align-items:center; justify-content:center; overflow:hidden; }
 .player .art img{ width:100%; height:100%; object-fit:cover; }
-.player .art svg{ width:26px; height:26px; fill:#fff; }
+.player .art svg{ width:30px; height:30px; fill:#fff; }
 .player .meta{ flex:1; min-width:0; }
-.player .station{ font-size:22px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.player .status{ font-size:15px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.player .localtime{ font-size:13px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.starbtn{ width:56px; height:56px; border-radius:50%; border:none; background:var(--tile); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
-.starbtn svg{ width:26px; height:26px; stroke:var(--accent); fill:none; stroke-width:1.8; }
+.player .station{ font-size:27px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.player .status{ font-size:17px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.player .localtime{ font-size:15px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.starbtn{ width:64px; height:64px; border-radius:50%; border:none; background:var(--tile); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+.starbtn svg{ width:30px; height:30px; stroke:var(--accent); fill:none; stroke-width:1.8; }
 .starbtn.active svg{ fill:var(--accent); }
-.playicon{ width:56px; height:56px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; flex:none; }
-.playicon svg{ width:24px; height:24px; fill:#0a0a0a; }
+.playicon{ width:64px; height:64px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; flex:none; }
+.playicon svg{ width:28px; height:28px; fill:#0a0a0a; }
 
 .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:100; }
 .overlay.show{ display:flex; }

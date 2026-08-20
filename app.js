@@ -427,6 +427,7 @@ function showScreen(which){
   document.getElementById('resultsWrap').style.display = which==='results' ? 'flex' : 'none';
   document.getElementById('searchWrap').style.display = which==='search' ? 'flex' : 'none';
   document.getElementById('backBtn').classList.toggle('show', which!=='home');
+  document.getElementById('appTitle').classList.toggle('hide', which!=='home');
   if(which==='home'){
     // Home never shows a breadcrumb trail from a previous drill-down.
     const box = document.getElementById('breadcrumbBox');
