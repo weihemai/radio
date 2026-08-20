@@ -619,6 +619,21 @@ function escapeHtml(str){
 }
 
 /* ============================================================
+   VIEWPORT HEIGHT FIX — embedded in-car browsers (ONVO, Tesla, etc.)
+   often have dynamic chrome (address bar, tab strip) that changes the
+   real visible height without CSS's 100vh reflecting it reliably,
+   which is the most likely cause of the player being cut off at the
+   bottom. We measure the actual visible height in JS and expose it
+   as --vh, kept in sync on resize/orientation change.
+   ============================================================ */
+function setViewportHeightVar(){
+  document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+}
+setViewportHeightVar();
+window.addEventListener('resize', setViewportHeightVar);
+window.addEventListener('orientationchange', setViewportHeightVar);
+
+/* ============================================================
    INIT
    ============================================================ */
 applyI18n();
