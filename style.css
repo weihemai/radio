@@ -32,7 +32,7 @@ html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--t
 .settingsbtn{ width:44px; height:44px; border-radius:50%; background:var(--tile); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; }
 .settingsbtn svg{ width:22px; height:22px; stroke:var(--text); fill:none; stroke-width:1.6; }
 
-.content{ flex:1; padding:12px 24px 0 24px; display:flex; flex-direction:column; gap:12px; min-height:0; overflow:hidden; position:relative; }
+.content{ flex:1; padding:12px 24px 14px 24px; display:flex; flex-direction:column; gap:12px; min-height:0; overflow:hidden; position:relative; }
 .section-label{ font-size:16px; text-transform:uppercase; letter-spacing:2px; color:var(--text-dim); font-weight:700; }
 
 [data-fontsize="small"]{ font-size:16px; }
@@ -109,7 +109,7 @@ html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--t
 .confirm-actions button{ flex:1; padding:10px; border-radius:8px; border:none; cursor:pointer; font-weight:700; font-size:14px; }
 .confirm-actions .seg-btn{ background:var(--panel); color:var(--text); border:1px solid var(--line); }
 
-.player{ flex:none; margin:12px 24px 16px 24px; background:var(--panel); border:1px solid var(--line);
+.player{ flex:none; margin:10px 24px 0 24px; background:var(--panel); border:1px solid var(--line);
   border-radius:22px; padding:16px 22px; display:flex; align-items:center; gap:18px; cursor:pointer; min-height:88px; }
 .player:active{ transform:scale(.995); }
 .player .art{ width:72px; height:72px; border-radius:14px; background:linear-gradient(135deg,var(--accent),#0a3d1f); flex:none; display:flex; align-items:center; justify-content:center; overflow:hidden; }

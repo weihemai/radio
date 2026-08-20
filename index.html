@@ -27,6 +27,18 @@
     <div class="header-progress-bar" id="headerProgressBar"></div>
   </div>
 
+  <!-- FULL-WIDTH PLAYER = PLAY/PAUSE BUTTON — sits between the clock and Favorites -->
+  <div class="player" id="playerBar">
+    <div class="art" id="playerArt"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+    <div class="meta">
+      <div class="station" id="stationName" data-i18n="pickStation">Sender wählen</div>
+      <div class="status" id="stationStatus" data-i18n="ready">Bereit</div>
+      <div class="localtime" id="playerLocalTime" style="display:none;"></div>
+    </div>
+    <button class="starbtn" id="starBtn" aria-label="Favorit"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></button>
+    <div class="playicon" id="playIconWrap"><svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+  </div>
+
   <div class="content">
 
     <div id="breadcrumbBox" class="breadcrumb" style="display:none;"></div>
@@ -73,18 +85,6 @@
 
     <div id="errorBox" class="error-box" style="display:none;"></div>
 
-  </div>
-
-  <!-- FULL-WIDTH PLAYER = PLAY/PAUSE BUTTON -->
-  <div class="player" id="playerBar">
-    <div class="art" id="playerArt"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-    <div class="meta">
-      <div class="station" id="stationName" data-i18n="pickStation">Sender wählen</div>
-      <div class="status" id="stationStatus" data-i18n="ready">Bereit</div>
-      <div class="localtime" id="playerLocalTime" style="display:none;"></div>
-    </div>
-    <button class="starbtn" id="starBtn" aria-label="Favorit"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></button>
-    <div class="playicon" id="playIconWrap"><svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
   </div>
 
   <audio id="audio" preload="none"></audio>
