@@ -2,7 +2,15 @@
    Autoradio App — main logic
    Static app: no backend, no build step.
    Persists favorites, recent stations, and settings in localStorage.
+
+   VERSIONING: bump APP_VERSION on every meaningful change from here on
+   (semver-ish: MAJOR.MINOR.PATCH — patch for fixes, minor for new
+   features, major for breaking/structural changes). This is the only
+   place the number lives; both the header title and the Settings
+   "About" section read it from here.
    ============================================================ */
+
+const APP_VERSION = '1.3.0';
 
 const STORAGE_KEYS = {
   favorites: 'autoradio_favorites',
@@ -194,27 +202,50 @@ function pushRecent(station){
    PLAYER — full-width bar; the whole bar toggles play/pause.
    Star button on the left toggles favorite status.
 
+   The play/pause icon itself already communicates playing vs. paused,
+   so we don't duplicate that in a text line. While a stream is
+   connecting, the icon is replaced by a spinning ring instead of a
+   "Lädt…" label — one less text line, and a more familiar pattern.
+   The status text element is kept only for the rare "stream
+   unreachable" error, where a short message is actually useful.
+
    "Now playing" (song/show title): fetched via the three-tier fallback
    chain in nowplaying.js (Cloudflare Worker -> direct browser ICY read
    -> station's own status-json.xsl). Shown both in this bar and, via
    the MediaSession API, in the vehicle's own native media widget.
    ============================================================ */
+function showLoadingSpinner(){
+  document.getElementById('playIcon').style.display = 'none';
+  document.getElementById('loadingSpinner').style.display = 'block';
+}
+function hideLoadingSpinner(){
+  document.getElementById('playIcon').style.display = 'block';
+  document.getElementById('loadingSpinner').style.display = 'none';
+}
+function setStatusError(text){
+  const el = document.getElementById('stationStatus');
+  if(text){ el.textContent = text; el.style.display = 'block'; }
+  else { el.textContent = ''; el.style.display = 'none'; }
+}
+
 function play(station){
   currentStation = station;
   document.getElementById('stationName').textContent = station.name;
-  document.getElementById('stationStatus').textContent = t('loading');
+  setStatusError(null);
   clearNowPlayingUI(station);
+  showLoadingSpinner();
 
   const art = document.getElementById('playerArt');
   art.innerHTML = `<img src="${stationLogo(station)}" onerror="this.src='${placeholderLogo(station.name, station.uuid)}'">`;
 
   audio.src = station.url;
   audio.play().then(()=>{
-    document.getElementById('stationStatus').textContent = t('playing');
+    hideLoadingSpinner();
     document.getElementById('playIcon').innerHTML = ICON_PAUSE;
     setMediaSessionPlaybackState('playing');
   }).catch(()=>{
-    document.getElementById('stationStatus').textContent = t('unreachable');
+    hideLoadingSpinner();
+    setStatusError(t('unreachable'));
   });
 
   updateStarBtn();
@@ -231,17 +262,17 @@ document.getElementById('playerBar').addEventListener('click', (e)=>{
   if(audio.paused){
     audio.play();
     document.getElementById('playIcon').innerHTML = ICON_PAUSE;
-    document.getElementById('stationStatus').textContent = t('playing');
+    setStatusError(null);
     setMediaSessionPlaybackState('playing');
   } else {
     audio.pause();
     document.getElementById('playIcon').innerHTML = ICON_PLAY;
-    document.getElementById('stationStatus').textContent = t('paused');
     setMediaSessionPlaybackState('paused');
   }
 });
-audio.addEventListener('waiting', ()=> document.getElementById('stationStatus').textContent = t('loading'));
-audio.addEventListener('error', ()=> document.getElementById('stationStatus').textContent = t('unreachable'));
+audio.addEventListener('waiting', showLoadingSpinner);
+audio.addEventListener('playing', hideLoadingSpinner);
+audio.addEventListener('error', ()=>{ hideLoadingSpinner(); setStatusError(t('unreachable')); });
 
 function setMediaSessionPlaybackState(state){
   if('mediaSession' in navigator){
@@ -677,6 +708,8 @@ window.addEventListener('orientationchange', setViewportHeightVar);
    INIT
    ============================================================ */
 applyI18n();
+document.getElementById('appVersionLabel').textContent = 'v' + APP_VERSION;
+document.getElementById('aboutVersion').textContent = 'v' + APP_VERSION;
 applyTheme(loadJSON(STORAGE_KEYS.theme, 'dark'));
 applyFontSize(loadJSON(STORAGE_KEYS.fontSize, 'medium'));
 applySource(loadJSON(STORAGE_KEYS.source, 'auto'));

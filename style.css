@@ -107,6 +107,8 @@ html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--t
 .diag-box .diag-ok{ color:var(--accent); }
 .diag-box .diag-fail{ color:#ff6b6b; }
 .seg-btn{ background:var(--tile); color:var(--text); border:1px solid var(--line); padding:12px; border-radius:10px; cursor:pointer; font-size:15px; font-weight:700; }
+.about-title{ font-size:20px; font-weight:800; }
+.about-line{ font-size:15px; color:var(--text-dim); }
 .panel button.danger{ background:#e2001a; border:none; color:#fff; font-weight:700; padding:12px; border-radius:10px; cursor:pointer; font-size:15px; }
 .confirm-box{ display:flex; flex-direction:column; gap:10px; background:var(--tile); border-radius:12px; padding:14px; }
 .confirm-actions{ display:flex; gap:10px; }
@@ -127,8 +129,10 @@ html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--t
 .starbtn{ width:64px; height:64px; border-radius:50%; border:none; background:var(--tile); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
 .starbtn svg{ width:30px; height:30px; stroke:var(--accent); fill:none; stroke-width:1.8; }
 .starbtn.active svg{ fill:var(--accent); }
-.playicon{ width:64px; height:64px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; flex:none; }
+.playicon{ width:64px; height:64px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; flex:none; position:relative; }
 .playicon svg{ width:28px; height:28px; fill:#0a0a0a; }
+.playicon .spinner{ width:26px; height:26px; fill:none; animation: spin .8s linear infinite; }
+@keyframes spin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
 
 .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:100; }
 .overlay.show{ display:flex; }

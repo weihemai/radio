@@ -17,7 +17,7 @@
    deployed worker URL (see the deployment instructions).
    ============================================================ */
 
-const NOW_PLAYING_WORKER_URL = 'https://autoradio-nowplaying.YOUR-SUBDOMAIN.workers.dev/';
+const NOW_PLAYING_WORKER_URL = 'https://autoradio-nowplaying.martin-werthammer.workers.dev/';
 const NOW_PLAYING_POLL_MS = 20000;
 const NOW_PLAYING_TIMEOUT_MS = 6000;
 
