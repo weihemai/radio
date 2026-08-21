@@ -1,6 +1,6 @@
 **My Car Web Radio**
 
-Being frustrated about my China EV only offering Chinese UI and no proper radio app covering international stations, I created this small car radio app with claude.ai (free version) for my car's built-in webbrowser featuring 
+Being frustrated about my China EV (ONVO L60 2024 model) only offering Chinese UI and no proper radio app covering international stations, I created this small car radio app with claude.ai (free version) for my car's built-in webbrowser featuring 
 
 - station lookup from https://www.radio-browser.info/ 
 - English / German language UI
