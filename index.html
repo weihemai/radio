@@ -14,7 +14,7 @@
       <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
       <span data-i18n="back">Zurück</span>
     </button>
-    <div class="apptitle" id="appTitle">Autoradio <span class="appversion">v1.3.0<br>(c) 2026 Martin Werthammer<br>(coded with Claude.ai)</span></div>
+    <div class="apptitle" id="appTitle">Autoradio <span class="appversion">v1.2.0</span></div>
     <div class="clock" id="clockBox">
       <span id="clockTime">--:--</span>
       <span class="tz" data-i18n="hereLocal">Hier vor Ort</span>
@@ -106,6 +106,11 @@
         </div>
       </div>
       <div class="source-note" data-i18n="sourceNote">Basiert auf der offenen Radio-Browser-Datenbank (aktuell die einzige community-gepflegte, wirklich offene Quelle; es gibt keine Server in Asien).</div>
+      <div class="row" style="flex-direction:column; align-items:stretch; gap:8px; border-top:1px solid var(--line); padding-top:16px;">
+        <span data-i18n="npDiagnostics">Now-Playing Diagnose</span>
+        <button class="seg-btn" id="npDiagnosticsBtn" data-i18n="npDiagnosticsRun">Test ausführen</button>
+        <div id="npDiagnosticsResult" class="diag-box" style="display:none;"></div>
+      </div>
       <div class="row">
         <span data-i18n="darkMode">Dark Mode</span>
         <div class="switch on" id="themeSwitch"><div class="knob"></div></div>

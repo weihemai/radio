@@ -17,7 +17,7 @@
    deployed worker URL (see the deployment instructions).
    ============================================================ */
 
-const NOW_PLAYING_WORKER_URL = 'https://autoradio-nowplaying.martin-werthammer.workers.dev/';
+const NOW_PLAYING_WORKER_URL = 'https://autoradio-nowplaying.YOUR-SUBDOMAIN.workers.dev/';
 const NOW_PLAYING_POLL_MS = 20000;
 const NOW_PLAYING_TIMEOUT_MS = 6000;
 
@@ -181,4 +181,67 @@ function updateMediaSession(station, npResult){
       ]
     });
   }catch(e){ /* MediaMetadata not supported in this browser: ignore */ }
+}
+
+/* ============================================================
+   ON-DEVICE DIAGNOSTICS
+   Runs each fallback tier individually against a stream URL and
+   reports exactly what happened at each step — designed to be read
+   directly on the car's screen, since opening real devtools inside
+   an embedded vehicle browser usually isn't possible. This is the
+   fastest way to pin down *why* a given environment fails: wrong
+   worker URL, worker unreachable (network/CSP block), worker reached
+   but errored, CORS block on the direct-ICY attempt, etc.
+   ============================================================ */
+async function runNowPlayingDiagnostics(streamUrl){
+  const results = [];
+
+  results.push({ tier: 'Worker-URL konfiguriert?', ok: !!(NOW_PLAYING_WORKER_URL && !NOW_PLAYING_WORKER_URL.includes('YOUR-SUBDOMAIN')), detail: NOW_PLAYING_WORKER_URL });
+
+  // Tier 1: worker — capture the raw failure reason (network error vs
+  // HTTP status vs JSON parse error vs worker-reported error) since
+  // each points to a different root cause.
+  try{
+    const t0 = Date.now();
+    const res = await fetch(NOW_PLAYING_WORKER_URL + '?url=' + encodeURIComponent(streamUrl));
+    const ms = Date.now() - t0;
+    let bodyText = await res.text();
+    let parsed = null;
+    try{ parsed = JSON.parse(bodyText); }catch(e){ /* not JSON */ }
+    if(!res.ok){
+      results.push({ tier: '1) Worker', ok:false, detail:`HTTP ${res.status} nach ${ms}ms — Worker erreicht, aber Fehler zurückgegeben. Antwort: ${bodyText.slice(0,150)}` });
+    } else if(parsed && parsed.error){
+      results.push({ tier: '1) Worker', ok:false, detail:`Worker erreicht (${ms}ms), meldet aber: "${parsed.error}" — meist heißt das, der Sender selbst liefert keine ICY-Metadaten.` });
+    } else if(parsed && parsed.title){
+      results.push({ tier: '1) Worker', ok:true, detail:`OK nach ${ms}ms: "${parsed.title}"` });
+    } else {
+      results.push({ tier: '1) Worker', ok:false, detail:`Antwort war kein gültiges JSON mit Titel (${ms}ms). Rohantwort: ${bodyText.slice(0,150)}` });
+    }
+  }catch(e){
+    // A raw network-level failure here (TypeError: Failed to fetch, or a
+    // SecurityError) most often means the request never left the device:
+    // a Content-Security-Policy or a domain whitelist in the car's
+    // browser container is blocking calls to workers.dev entirely.
+    results.push({ tier: '1) Worker', ok:false, detail:`Netzwerkfehler, Request kam nie an: "${e.message}". Typischer Grund: die Auto-Browser-Umgebung blockiert Verbindungen zu workers.dev (CSP/Domain-Whitelist) unabhängig vom normalen Internetzugang.` });
+  }
+
+  // Tier 2: direct ICY
+  try{
+    const t0 = Date.now();
+    const result = await fetchViaDirectIcy(streamUrl);
+    results.push({ tier: '2) Direkter Browser-Versuch', ok:true, detail:`OK nach ${Date.now()-t0}ms: "${result.title}"` });
+  }catch(e){
+    results.push({ tier: '2) Direkter Browser-Versuch', ok:false, detail: e.message });
+  }
+
+  // Tier 3: status-json.xsl
+  try{
+    const t0 = Date.now();
+    const result = await fetchViaStatusJson(streamUrl);
+    results.push({ tier: '3) status-json.xsl', ok:true, detail:`OK nach ${Date.now()-t0}ms: "${result.title}"` });
+  }catch(e){
+    results.push({ tier: '3) status-json.xsl', ok:false, detail: e.message });
+  }
+
+  return results;
 }

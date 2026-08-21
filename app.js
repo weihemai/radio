@@ -625,6 +625,30 @@ document.getElementById('clearFavsConfirm').addEventListener('click', ()=>{
   clearConfirmBox.style.display = 'none';
 });
 
+/* ---------- now-playing on-device diagnostics ---------- */
+document.getElementById('npDiagnosticsBtn').addEventListener('click', async ()=>{
+  const box = document.getElementById('npDiagnosticsResult');
+  const btn = document.getElementById('npDiagnosticsBtn');
+  const testUrl = (currentStation && currentStation.url) || (favorites[0] && favorites[0].url);
+  if(!testUrl){
+    box.style.display = 'block';
+    box.textContent = 'Kein Sender ausgewählt und keine Favoriten vorhanden — erst einen Sender abspielen, dann testen.';
+    return;
+  }
+  btn.disabled = true;
+  box.style.display = 'block';
+  box.textContent = 'Teste gegen: ' + testUrl + ' …';
+  try{
+    const results = await runNowPlayingDiagnostics(testUrl);
+    box.innerHTML = results.map(r =>
+      `<span class="${r.ok ? 'diag-ok' : 'diag-fail'}">${r.ok ? '✓' : '✗'} ${escapeHtml(r.tier)}</span>\n${escapeHtml(r.detail || '')}\n`
+    ).join('\n');
+  }catch(e){
+    box.textContent = 'Diagnose fehlgeschlagen: ' + e.message;
+  }
+  btn.disabled = false;
+});
+
 /* ============================================================
    UTIL
    ============================================================ */

@@ -15,7 +15,8 @@ const I18N = {
     clearFavs:"Alle Favoriten löschen", clearFavsConfirmMsg:"Wirklich alle Favoriten löschen?",
     cancel:"Abbrechen", confirmDelete:"Löschen",
     dataSource:"Datenquelle", sourceAuto:"Automatisch", sourceEu:"EU-Server",
-    sourceNote:"Basiert auf der offenen Radio-Browser-Datenbank (aktuell die einzige community-gepflegte, wirklich offene Quelle; es gibt keine Server in Asien)."
+    sourceNote:"Basiert auf der offenen Radio-Browser-Datenbank (aktuell die einzige community-gepflegte, wirklich offene Quelle; es gibt keine Server in Asien).",
+    npDiagnostics:"Now-Playing Diagnose", npDiagnosticsRun:"Test ausführen"
   },
   en: {
     back:"Back", hereLocal:"Local time here", favorites:"Favorites",
@@ -33,7 +34,8 @@ const I18N = {
     clearFavs:"Clear all favorites", clearFavsConfirmMsg:"Really delete all favorites?",
     cancel:"Cancel", confirmDelete:"Delete",
     dataSource:"Data source", sourceAuto:"Automatic", sourceEu:"EU servers",
-    sourceNote:"Powered by the open Radio-Browser database (currently the only community-run, truly open source; no servers exist in Asia)."
+    sourceNote:"Powered by the open Radio-Browser database (currently the only community-run, truly open source; no servers exist in Asia).",
+    npDiagnostics:"Now-Playing diagnostics", npDiagnosticsRun:"Run test"
   }
 };
 
