@@ -14,7 +14,7 @@
       <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
       <span data-i18n="back">Zurück</span>
     </button>
-    <div class="apptitle" id="appTitle">Autoradio <span class="appversion">v1.2.0</span></div>
+    <div class="apptitle" id="appTitle">Autoradio <span class="appversion">v1.3.0<br>(c) 2026 Martin Werthammer<br>(coded with Claude.ai)</span></div>
     <div class="clock" id="clockBox">
       <span id="clockTime">--:--</span>
       <span class="tz" data-i18n="hereLocal">Hier vor Ort</span>
@@ -32,6 +32,7 @@
     <div class="art" id="playerArt"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
     <div class="meta">
       <div class="station" id="stationName" data-i18n="pickStation">Sender wählen</div>
+      <div class="nowplaying" id="nowPlaying" style="display:none;"></div>
       <div class="status" id="stationStatus" data-i18n="ready">Bereit</div>
       <div class="localtime" id="playerLocalTime" style="display:none;"></div>
     </div>
@@ -140,6 +141,7 @@
 
 <script src="i18n.js"></script>
 <script src="api.js"></script>
+<script src="nowplaying.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

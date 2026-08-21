@@ -194,17 +194,16 @@ function pushRecent(station){
    PLAYER — full-width bar; the whole bar toggles play/pause.
    Star button on the left toggles favorite status.
 
-   NOTE on "now playing" (song/show title): a plain <audio> element
-   in the browser has no access to the ICY metadata that Icecast/
-   Shoutcast servers embed between audio frames — reading it would
-   require a server-side proxy, which is out of scope for a fully
-   static, no-backend page. We only show what we reliably know:
-   station name, status, and its local time.
+   "Now playing" (song/show title): fetched via the three-tier fallback
+   chain in nowplaying.js (Cloudflare Worker -> direct browser ICY read
+   -> station's own status-json.xsl). Shown both in this bar and, via
+   the MediaSession API, in the vehicle's own native media widget.
    ============================================================ */
 function play(station){
   currentStation = station;
   document.getElementById('stationName').textContent = station.name;
   document.getElementById('stationStatus').textContent = t('loading');
+  clearNowPlayingUI(station);
 
   const art = document.getElementById('playerArt');
   art.innerHTML = `<img src="${stationLogo(station)}" onerror="this.src='${placeholderLogo(station.name, station.uuid)}'">`;
@@ -213,6 +212,7 @@ function play(station){
   audio.play().then(()=>{
     document.getElementById('stationStatus').textContent = t('playing');
     document.getElementById('playIcon').innerHTML = ICON_PAUSE;
+    setMediaSessionPlaybackState('playing');
   }).catch(()=>{
     document.getElementById('stationStatus').textContent = t('unreachable');
   });
@@ -221,6 +221,8 @@ function play(station){
   tickClocks();
   pushRecent(station);
   registerClick(station.uuid);
+  updateMediaSession(station, null); // shows station name immediately; polling refines it
+  startNowPlayingPolling(station);
 }
 
 document.getElementById('playerBar').addEventListener('click', (e)=>{
@@ -230,14 +232,28 @@ document.getElementById('playerBar').addEventListener('click', (e)=>{
     audio.play();
     document.getElementById('playIcon').innerHTML = ICON_PAUSE;
     document.getElementById('stationStatus').textContent = t('playing');
+    setMediaSessionPlaybackState('playing');
   } else {
     audio.pause();
     document.getElementById('playIcon').innerHTML = ICON_PLAY;
     document.getElementById('stationStatus').textContent = t('paused');
+    setMediaSessionPlaybackState('paused');
   }
 });
 audio.addEventListener('waiting', ()=> document.getElementById('stationStatus').textContent = t('loading'));
 audio.addEventListener('error', ()=> document.getElementById('stationStatus').textContent = t('unreachable'));
+
+function setMediaSessionPlaybackState(state){
+  if('mediaSession' in navigator){
+    try{ navigator.mediaSession.playbackState = state; }catch(e){}
+  }
+}
+if('mediaSession' in navigator){
+  try{
+    navigator.mediaSession.setActionHandler('play', ()=>{ document.getElementById('playerBar').click(); });
+    navigator.mediaSession.setActionHandler('pause', ()=>{ document.getElementById('playerBar').click(); });
+  }catch(e){ /* some browsers don't support all action handlers: ignore */ }
+}
 
 function updateStarBtn(){
   document.getElementById('starBtn').classList.toggle('active', isFavorite(currentStation));
