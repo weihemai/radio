@@ -709,6 +709,7 @@ window.addEventListener('orientationchange', setViewportHeightVar);
    ============================================================ */
 applyI18n();
 document.getElementById('appVersionLabel').textContent = 'v' + APP_VERSION;
+document.getElementById('appVersionLabelBack').textContent = 'v' + APP_VERSION;
 document.getElementById('aboutVersion').textContent = 'v' + APP_VERSION;
 applyTheme(loadJSON(STORAGE_KEYS.theme, 'dark'));
 applyFontSize(loadJSON(STORAGE_KEYS.fontSize, 'medium'));

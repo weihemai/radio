@@ -17,7 +17,11 @@
    deployed worker URL (see the deployment instructions).
    ============================================================ */
 
-const NOW_PLAYING_WORKER_URL = 'https://autoradio-nowplaying.martin-werthammer.workers.dev/';
+// Switched from Cloudflare Workers (workers.dev is often blocked in
+// mainland China) to Render.com. Replace with your own Render URL
+// after deploying autoradio-render-service, e.g.:
+// 'https://autoradio-nowplaying.onrender.com/'
+const NOW_PLAYING_WORKER_URL = 'https://YOUR-RENDER-SERVICE.onrender.com/';
 const NOW_PLAYING_POLL_MS = 20000;
 const NOW_PLAYING_TIMEOUT_MS = 6000;
 
