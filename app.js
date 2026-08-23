@@ -10,7 +10,7 @@
    "About" section read it from here.
    ============================================================ */
 
-const APP_VERSION = '1.3.0';
+const APP_VERSION = '1.4.0';
 
 const STORAGE_KEYS = {
   favorites: 'autoradio_favorites',
