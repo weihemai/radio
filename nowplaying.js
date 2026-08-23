@@ -21,7 +21,7 @@
 // mainland China) to Render.com. Replace with your own Render URL
 // after deploying autoradio-render-service, e.g.:
 // 'https://autoradio-nowplaying.onrender.com/'
-const NOW_PLAYING_WORKER_URL = 'https://YOUR-RENDER-SERVICE.onrender.com/';
+const NOW_PLAYING_WORKER_URL = 'https://nowplaying-660y.onrender.com';
 const NOW_PLAYING_POLL_MS = 20000;
 const NOW_PLAYING_TIMEOUT_MS = 6000;
 
