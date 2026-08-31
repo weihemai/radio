@@ -14,10 +14,7 @@ const APP_VERSION = '1.4.0';
 
 const STORAGE_KEYS = {
   favorites: 'autoradio_favorites',
-  recent: 'autoradio_recent',
-  theme: 'autoradio_theme',
-  fontSize: 'autoradio_fontsize',
-  source: 'autoradio_source'
+  recent: 'autoradio_recent'
 };
 
 /* ---------- persistence helpers ---------- */
@@ -326,12 +323,8 @@ document.querySelectorAll('#homeGrid .tile').forEach(tile=>{
 async function handleHomeAction(action){
   switch(action){
     case 'land': return openCountryContinents();
-    case 'genre':
-    case 'musik': return openAlphabeticGroups(t('genre'), await withLoading(getTags()), tg => ({ filter:{ tag:tg.name } }));
     case 'sprache': return openAlphabeticGroups(t('language'), await withLoading(getLanguages()), l => ({ filter:{ language:l.name } }));
     case 'alle': return openStationLevel(t('allStations'), await withLoading(getTopStations(200)));
-    case 'nachrichten': return openStationLevel(t('news'), await withLoading(searchStations({ tag:'news', limit:100 })));
-    case 'talk': return openStationLevel(t('talk'), await withLoading(searchStations({ tag:'talk', limit:100 })));
     case 'recent': return openStationLevel(t('recent'), recentStations);
     case 'suche': return openSearch();
   }
@@ -470,6 +463,7 @@ function renderBreadcrumb(){
    RESULTS GRID — natively scrollable, holds every item at once.
    ============================================================ */
 function showScreen(which){
+  document.getElementById('favWrap').style.display = which==='home' ? 'flex' : 'none';
   document.getElementById('homeGrid').style.display = which==='home' ? 'grid' : 'none';
   document.getElementById('resultsWrap').style.display = which==='results' ? 'flex' : 'none';
   document.getElementById('searchWrap').style.display = which==='search' ? 'flex' : 'none';
@@ -505,7 +499,7 @@ function renderResultsGrid(){
 function buildCategoryTile(item){
   const tile = document.createElement('div');
   tile.className = 'tile';
-  tile.innerHTML = `<div class="icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div class="label">${escapeHtml(item.title)}</div>`;
+  tile.innerHTML = `<div class="icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13" class="di-fill"/><circle cx="6" cy="18" r="3" class="di-dot"/><circle cx="18" cy="16" r="3" class="di-dot"/></svg></div><div class="label">${escapeHtml(item.title)}</div>`;
   tile.addEventListener('click', ()=> item.onOpen());
   return tile;
 }
@@ -585,45 +579,75 @@ const overlay = document.getElementById('settingsOverlay');
 document.getElementById('settingsBtn').addEventListener('click', ()=> overlay.classList.add('show'));
 document.getElementById('closeSettings').addEventListener('click', ()=> overlay.classList.remove('show'));
 
-function applyTheme(theme){
-  document.body.setAttribute('data-theme', theme);
-  document.getElementById('themeSwitch').classList.toggle('on', theme==='dark');
-  saveJSON(STORAGE_KEYS.theme, theme);
+// ---- Theme: system by default (follows prefers-color-scheme), optional override ----
+function applyTheme(){
+  const override = localStorage.getItem('autoradio_theme'); // 'light' | 'dark' | null (=system)
+  if(override) document.documentElement.setAttribute('data-theme', override);
+  else document.documentElement.removeAttribute('data-theme');
 }
-document.getElementById('themeSwitch').addEventListener('click', function(){
-  const isDark = document.body.getAttribute('data-theme') === 'dark';
-  applyTheme(isDark ? 'light' : 'dark');
+applyTheme();
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{
+  if(!localStorage.getItem('autoradio_theme')) applyTheme();
 });
 
-function applyFontSize(size){
-  document.body.setAttribute('data-fontsize', size);
-  saveJSON(STORAGE_KEYS.fontSize, size);
-  document.querySelectorAll('.seg[data-group="fontsize"] button').forEach(b=>{
-    b.classList.toggle('active', b.dataset.size === size);
-  });
+// ---- Accent color ----
+function applyAccent(){
+  const accent = localStorage.getItem('autoradio_accent') || 'green';
+  if(accent === 'green') document.documentElement.removeAttribute('data-accent');
+  else document.documentElement.setAttribute('data-accent', accent);
 }
-document.querySelectorAll('.seg[data-group="fontsize"] button').forEach(btn=>{
-  btn.addEventListener('click', ()=> applyFontSize(btn.dataset.size));
-});
+applyAccent();
+
+// ---- Font size ----
+function applyFontSize(){
+  const size = localStorage.getItem('autoradio_fontsize') || 'medium';
+  if(size === 'medium') document.documentElement.removeAttribute('data-fontsize');
+  else document.documentElement.setAttribute('data-fontsize', size);
+}
+applyFontSize();
 
 /* Data source: "auto" races all known mirrors and picks the fastest;
    "eu" pins to the European mirrors only (skips the discovery race,
    useful if the auto-race itself is adding latency). There is
    currently no non-European Radio-Browser mirror to offer here —
    see the note in the settings panel. */
-function applySource(source){
-  saveJSON(STORAGE_KEYS.source, source);
-  document.querySelectorAll('.seg[data-group="source"] button').forEach(b=>{
-    b.classList.toggle('active', b.dataset.source === source);
-  });
+function applySource(){
+  const source = localStorage.getItem('autoradio_source') || 'auto';
   setPreferEuServersOnly(source === 'eu');
 }
-document.querySelectorAll('.seg[data-group="source"] button').forEach(btn=>{
-  btn.addEventListener('click', ()=> applySource(btn.dataset.source));
-});
+applySource();
 
-document.getElementById('langDE').addEventListener('click', ()=> setLang('de'));
-document.getElementById('langEN').addEventListener('click', ()=> setLang('en'));
+function wireSegGroup(id, storageKey, defaultValue, onChange, btnSelector='.seg-btn'){
+  const group = document.getElementById(id);
+  const current = localStorage.getItem(storageKey) || defaultValue;
+  group.querySelectorAll(btnSelector).forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.value === current);
+    btn.addEventListener('click', ()=>{
+      localStorage.setItem(storageKey, btn.dataset.value);
+      group.querySelectorAll(btnSelector).forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      if(onChange) onChange(btn.dataset.value);
+    });
+  });
+}
+
+wireSegGroup('themeSeg', 'autoradio_theme', 'system', (val)=>{
+  if(val === 'system') localStorage.removeItem('autoradio_theme');
+  applyTheme();
+});
+// theme default needs special handling since 'system' means "no key stored"
+(function initThemeSeg(){
+  const stored = localStorage.getItem('autoradio_theme');
+  document.querySelectorAll('#themeSeg .seg-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.value === (stored || 'system'));
+  });
+})();
+
+wireSegGroup('accentSeg', 'autoradio_accent', 'green', applyAccent, '.swatch');
+wireSegGroup('fontSizeSeg', 'autoradio_fontsize', 'medium', applyFontSize);
+wireSegGroup('sourceSeg', 'autoradio_source', 'auto', applySource);
+wireSegGroup('langSeg', 'autoradio_lang', currentLang, (val)=> setLang(val));
+
 function onLangChanged(){
   renderFavs();
   if(document.getElementById('resultsWrap').style.display === 'flex'){ renderBreadcrumb(); renderResultsGrid(); }
@@ -705,15 +729,33 @@ window.addEventListener('resize', setViewportHeightVar);
 window.addEventListener('orientationchange', setViewportHeightVar);
 
 /* ============================================================
+   ON-SCREEN KEYBOARD INSET — window.innerHeight above mostly does NOT
+   change when the on-screen keyboard opens (only the visual viewport
+   shrinks), so the keyboard used to sit as a plain overlay on top of
+   the fixed-height layout and bury the bottom search results until
+   dismissed by hand. The VisualViewport API is the one that actually
+   reports the keyboard opening; we expose its height as --kb-inset so
+   the search screen (see #searchWrap in style.css) can compress itself
+   into exactly the space that's still visible above the keyboard.
+   ============================================================ */
+function updateKeyboardInset(){
+  if(!window.visualViewport) return;
+  const inset = Math.max(0, window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop);
+  document.documentElement.style.setProperty('--kb-inset', inset + 'px');
+}
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', updateKeyboardInset);
+  window.visualViewport.addEventListener('scroll', updateKeyboardInset);
+  updateKeyboardInset();
+}
+
+/* ============================================================
    INIT
    ============================================================ */
 applyI18n();
 document.getElementById('appVersionLabel').textContent = 'v' + APP_VERSION;
 document.getElementById('appVersionLabelBack').textContent = 'v' + APP_VERSION;
 document.getElementById('aboutVersion').textContent = 'v' + APP_VERSION;
-applyTheme(loadJSON(STORAGE_KEYS.theme, 'dark'));
-applyFontSize(loadJSON(STORAGE_KEYS.fontSize, 'medium'));
-applySource(loadJSON(STORAGE_KEYS.source, 'auto'));
 setLang(currentLang);
 renderFavs();
 

@@ -160,17 +160,6 @@ async function getCountries(){
     .sort((a,b)=> b.stationcount - a.stationcount);
 }
 
-async function getTags(){
-  // No `limit` param at all: sending limit=0 actually means "return zero
-  // rows" on this API (it's SQL-backed), which was silently emptying the
-  // Genre/Music screen. Omitting the param lets the server use its own
-  // default, which returns the full tag list.
-  const raw = await apiFetch('/json/tags');
-  return raw
-    .filter(t => t.name && t.stationcount > 3)
-    .sort((a,b)=> b.stationcount - a.stationcount);
-}
-
 async function getLanguages(){
   const raw = await apiFetch('/json/languages');
   return raw

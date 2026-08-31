@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Autoradio</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head>
-<body data-theme="dark">
+<body>
 <div class="app" id="app">
 
   <div class="topbar">
@@ -57,27 +58,24 @@
 
     <!-- HOME SCREEN -->
     <div id="homeGrid" class="home-grid">
-      <div class="tile" data-action="genre"><div class="icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div class="label" data-i18n="genre">Genre</div></div>
-      <div class="tile" data-action="musik"><div class="icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div class="label" data-i18n="music">Musik</div></div>
-      <div class="tile" data-action="sprache"><div class="icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg></div><div class="label" data-i18n="language">Sprache</div></div>
+      <div class="tile" data-action="recent"><div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" class="di-fill"/><path d="M12 7v5l3.5 3.5" class="di-stroke"/></svg></div><div class="label" data-i18n="recent">Zuletzt gehört</div></div>
+      <div class="tile" data-action="suche"><div class="icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" class="di-fill"/><path d="M21 21l-4.3-4.3" class="di-stroke"/></svg></div><div class="label" data-i18n="search">Suche</div></div>
 
-      <div class="tile" data-action="alle"><div class="icon"><svg viewBox="0 0 24 24"><circle cx="8" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="16" cy="12" r="1.4"/><circle cx="12" cy="12" r="9"/></svg></div><div class="label" data-i18n="allStations">Alle Sender</div></div>
-      <div class="tile" data-action="nachrichten"><div class="icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div><div class="label" data-i18n="news">Nachrichten</div></div>
-      <div class="tile" data-action="land"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div><div class="label" data-i18n="country">Land</div></div>
+      <div class="tile" data-action="land"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z" class="di-fill"/><circle cx="12" cy="10" r="2.5" class="di-dot"/></svg></div><div class="label" data-i18n="country">Land</div></div>
+      <div class="tile" data-action="sprache"><div class="icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z" class="di-fill"/></svg></div><div class="label" data-i18n="language">Sprache</div></div>
 
-      <div class="tile" data-action="recent"><div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 3.5"/></svg></div><div class="label" data-i18n="recent">Zuletzt gehört</div></div>
-      <div class="tile" data-action="talk"><div class="icon"><svg viewBox="0 0 24 24"><path d="M4 21v-7a8 8 0 0116 0v7"/><path d="M4 14h4v7H4zM16 14h4v7h-4z"/></svg></div><div class="label" data-i18n="talk">Talk</div></div>
-      <div class="tile" data-action="suche"><div class="icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><div class="label" data-i18n="search">Suche</div></div>
+      <div class="tile" data-action="alle"><div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" class="di-fill"/><circle cx="8" cy="12" r="1.4" class="di-dot"/><circle cx="12" cy="12" r="1.4" class="di-dot"/><circle cx="16" cy="12" r="1.4" class="di-dot"/></svg></div><div class="label" data-i18n="allStations">Alle Sender</div></div>
     </div>
 
-    <!-- SEARCH SCREEN -->
+    <!-- SEARCH SCREEN — input docked below the results: the on-screen
+         keyboard opens directly under it and never covers a hit. -->
     <div id="searchWrap" class="results-wrap" style="display:none;">
-      <div class="search-wrap">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Sender, Genre oder Ort suchen…">
-      </div>
       <div class="results-scroll" id="searchScroll">
         <div class="results-grid" id="searchGrid"></div>
+      </div>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Sender suchen…">
       </div>
     </div>
 
@@ -96,57 +94,86 @@
 
   <div class="overlay" id="settingsOverlay">
     <div class="panel">
-      <button class="closebtn" id="closeSettings" data-i18n="close">Schließen ✕</button>
-      <h3 data-i18n="settings">Einstellungen</h3>
-      <div class="row">
-        <span data-i18n="language2">Sprache</span>
-        <div class="seg"><button id="langDE" class="active">DE</button><button id="langEN">EN</button></div>
+      <div class="panel-header">
+        <button class="closex" id="closeSettings" aria-label="Schließen">✕</button>
+        <h3 data-i18n="settings">Einstellungen</h3>
       </div>
-      <div class="row">
-        <span data-i18n="dataSource">Datenquelle</span>
-        <div class="seg" data-group="source">
-          <button data-source="auto" class="active" data-i18n="sourceAuto">Automatisch</button>
-          <button data-source="eu" data-i18n="sourceEu">EU-Server</button>
+
+      <div class="panel-body">
+      <div class="settings-grid">
+        <div class="row">
+          <span data-i18n="language2">Sprache</span>
+          <div class="seg-group" id="langSeg">
+            <button class="seg-btn" data-value="de">DE</button>
+            <button class="seg-btn" data-value="en">EN</button>
+          </div>
         </div>
-      </div>
-      <div class="source-note" data-i18n="sourceNote">Basiert auf der offenen Radio-Browser-Datenbank (aktuell die einzige community-gepflegte, wirklich offene Quelle; es gibt keine Server in Asien).</div>
-      <div class="row" style="flex-direction:column; align-items:stretch; gap:8px; border-top:1px solid var(--line); padding-top:16px;">
-        <span data-i18n="npDiagnostics">Now-Playing Diagnose</span>
-        <button class="seg-btn" id="npDiagnosticsBtn" data-i18n="npDiagnosticsRun">Test ausführen</button>
-        <div id="npDiagnosticsResult" class="diag-box" style="display:none;"></div>
-      </div>
-      <div class="row">
-        <span data-i18n="darkMode">Dark Mode</span>
-        <div class="switch on" id="themeSwitch"><div class="knob"></div></div>
-      </div>
-      <div class="row">
-        <span data-i18n="fontSize">Schriftgröße</span>
-        <div class="seg" data-group="fontsize">
-          <button data-size="small" data-i18n="fontSmall">Klein</button>
-          <button data-size="medium" class="active" data-i18n="fontMedium">Mittel</button>
-          <button data-size="large" data-i18n="fontLarge">Groß</button>
+
+        <div class="row">
+          <span data-i18n="theme">Darstellung</span>
+          <div class="seg-group" id="themeSeg">
+            <button class="seg-btn" data-value="system" data-i18n="themeSystem">System</button>
+            <button class="seg-btn" data-value="light" data-i18n="themeLight">Hell</button>
+            <button class="seg-btn" data-value="dark" data-i18n="themeDark">Dunkel</button>
+          </div>
         </div>
-      </div>
-      <div class="row" style="flex-direction:column; align-items:stretch; gap:8px;">
-        <span data-i18n="addStream">Stream manuell hinzufügen</span>
-        <input type="text" id="addName" data-i18n-placeholder="stationName" placeholder="Sendername">
-        <input type="text" id="addUrl" placeholder="Stream-URL (https://...)">
-        <button class="primary" id="addStreamBtn" data-i18n="addBtn">Hinzufügen</button>
-      </div>
-      <div class="row" style="flex-direction:column; align-items:stretch; gap:8px; border-top:1px solid var(--line); padding-top:16px;">
-        <button class="danger" id="clearFavsBtn" data-i18n="clearFavs">Alle Favoriten löschen</button>
-        <div id="clearConfirmBox" class="confirm-box" style="display:none;">
-          <span data-i18n="clearFavsConfirmMsg">Wirklich alle Favoriten löschen?</span>
-          <div class="confirm-actions">
-            <button id="clearFavsCancel" class="seg-btn" data-i18n="cancel">Abbrechen</button>
-            <button id="clearFavsConfirm" class="danger" data-i18n="confirmDelete">Löschen</button>
+
+        <div class="row">
+          <span data-i18n="accentColor">Akzentfarbe</span>
+          <div class="swatch-group" id="accentSeg">
+            <button class="swatch" data-value="green" style="background:#1db954" aria-label="Grün"></button>
+            <button class="swatch" data-value="blue" style="background:#3b82f6" aria-label="Blau"></button>
+            <button class="swatch" data-value="red" style="background:#ef4444" aria-label="Rot"></button>
+            <button class="swatch" data-value="orange" style="background:#f59e0b" aria-label="Orange"></button>
+            <button class="swatch" data-value="purple" style="background:#a855f7" aria-label="Lila"></button>
+          </div>
+        </div>
+
+        <div class="row">
+          <span data-i18n="fontSize">Schriftgröße</span>
+          <div class="seg-group" id="fontSizeSeg">
+            <button class="seg-btn" data-value="small" data-i18n="fontSmall">Klein</button>
+            <button class="seg-btn" data-value="medium" data-i18n="fontMedium">Mittel</button>
+            <button class="seg-btn" data-value="large" data-i18n="fontLarge">Groß</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <span data-i18n="dataSource">Datenquelle</span>
+          <div class="seg-group" id="sourceSeg">
+            <button class="seg-btn" data-value="auto" data-i18n="sourceAuto">Automatisch</button>
+            <button class="seg-btn" data-value="eu" data-i18n="sourceEu">EU-Server</button>
           </div>
         </div>
       </div>
-      <div class="row about-box" style="flex-direction:column; align-items:flex-start; gap:4px; border-top:1px solid var(--line); padding-top:16px;">
-        <div class="about-title">Autoradio <span id="aboutVersion"></span></div>
-        <div class="about-line">© 2026 Martin Werthammer</div>
-        <div class="about-line">(coded with Claude.ai)</div>
+      <div class="source-note" data-i18n="sourceNote">Basiert auf der offenen Radio-Browser-Datenbank (aktuell die einzige community-gepflegte, wirklich offene Quelle; es gibt keine Server in Asien).</div>
+
+      <div class="section-label" data-i18n="npDiagnostics">Now-Playing Diagnose</div>
+      <div class="confirm-box">
+        <button class="seg-btn" id="npDiagnosticsBtn" data-i18n="npDiagnosticsRun">Test ausführen</button>
+        <div id="npDiagnosticsResult" class="diag-box" style="display:none;"></div>
+      </div>
+
+      <div class="section-label" data-i18n="addStream">Stream manuell hinzufügen</div>
+      <div class="confirm-box">
+        <input type="text" id="addName" data-i18n-placeholder="stationName" placeholder="Sendername">
+        <input type="text" id="addUrl" placeholder="Stream-URL (https://...)">
+        <button class="seg-btn primary" id="addStreamBtn" data-i18n="addBtn">Hinzufügen</button>
+      </div>
+
+      <div class="confirm-box">
+        <button class="seg-btn danger-btn" id="clearFavsBtn" data-i18n="clearFavs">Alle Favoriten löschen</button>
+        <div id="clearConfirmBox" style="display:none; flex-direction:column; gap:8px;">
+          <span data-i18n="clearFavsConfirmMsg">Wirklich alle Favoriten löschen?</span>
+          <div class="confirm-actions">
+            <button id="clearFavsCancel" class="seg-btn" data-i18n="cancel">Abbrechen</button>
+            <button id="clearFavsConfirm" class="seg-btn danger-btn" data-i18n="confirmDelete">Löschen</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-line" style="text-align:center; margin-top:4px;">Autoradio <span id="aboutVersion"></span> · © 2026 Martin Werthammer</div>
+      <div class="about-line" style="text-align:center; opacity:.7;">(coded with Claude.ai)</div>
       </div>
     </div>
   </div>
