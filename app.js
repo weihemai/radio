@@ -163,7 +163,14 @@ function renderFavs(){
   favorites.forEach(f=>{
     const tile = document.createElement('div');
     tile.className = 'fav-tile';
-    tile.innerHTML = `<img src="${stationLogo(f)}" loading="lazy" onerror="this.src='${placeholderLogo(f.name, f.uuid)}'"><div class="flabel">${escapeHtml(f.name)}</div>`;
+    const cover = document.createElement('div');
+    cover.className = 'cover';
+    cover.style.backgroundImage = `url(${JSON.stringify(stationLogo(f))})`;
+    const label = document.createElement('div');
+    label.className = 'flabel';
+    label.textContent = f.name;
+    tile.appendChild(cover);
+    tile.appendChild(label);
     tile.addEventListener('click', ()=> play(f));
     row.appendChild(tile);
   });
