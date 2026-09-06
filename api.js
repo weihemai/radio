@@ -70,6 +70,13 @@ function setPreferEuServersOnly(value){
   // already-resolved result; a page reload re-runs the full discovery race.
 }
 
+// A single subscriber, set by whichever UI flow (withLoading()) is
+// currently waiting on an apiFetch call, so the "connecting/connected"
+// status message can reflect the real fetch lifecycle without every
+// searchStations/getTopStations/etc. call site needing its own callback.
+let apiStatusListener = null;
+function setApiStatusListener(fn){ apiStatusListener = fn; }
+
 async function apiFetch(path, onProgress){
   await serverDiscoveryPromise; // make sure we've picked the fastest server first
   let lastError = null;
@@ -77,9 +84,11 @@ async function apiFetch(path, onProgress){
     const idx = (activeServerIndex + i) % RADIO_API_SERVERS.length;
     const base = RADIO_API_SERVERS[idx];
     try{
+      apiStatusListener && apiStatusListener('connecting');
       const res = await fetch(base + path, {
         headers: { 'User-Agent': 'AutoradioApp/1.0' }
       });
+      apiStatusListener && apiStatusListener('connected');
       if(!res.ok) throw new Error('HTTP ' + res.status);
       const data = await readJsonWithProgress(res, onProgress);
       activeServerIndex = idx; // remember the working server for next calls

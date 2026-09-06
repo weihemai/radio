@@ -198,9 +198,17 @@ function updateMediaSession(station, npResult){
    but errored, CORS block on the direct-ICY attempt, etc.
    ============================================================ */
 async function runNowPlayingDiagnostics(streamUrl){
+  // Diagnostics text is hardcoded in DE/EN here rather than routed through
+  // the dynamic i18n system (I18N/t()) — it's a developer-facing debug log,
+  // not core UI copy, so a plain language switch is enough.
+  const isEn = currentLang === 'en';
   const results = [];
 
-  results.push({ tier: 'Worker-URL konfiguriert?', ok: !!(NOW_PLAYING_WORKER_URL && !NOW_PLAYING_WORKER_URL.includes('YOUR-SUBDOMAIN')), detail: NOW_PLAYING_WORKER_URL });
+  results.push({
+    tier: isEn ? 'Worker URL configured?' : 'Worker-URL konfiguriert?',
+    ok: !!(NOW_PLAYING_WORKER_URL && !NOW_PLAYING_WORKER_URL.includes('YOUR-SUBDOMAIN')),
+    detail: NOW_PLAYING_WORKER_URL
+  });
 
   // Tier 1: worker — capture the raw failure reason (network error vs
   // HTTP status vs JSON parse error vs worker-reported error) since
@@ -213,36 +221,46 @@ async function runNowPlayingDiagnostics(streamUrl){
     let parsed = null;
     try{ parsed = JSON.parse(bodyText); }catch(e){ /* not JSON */ }
     if(!res.ok){
-      results.push({ tier: '1) Worker', ok:false, detail:`HTTP ${res.status} nach ${ms}ms — Worker erreicht, aber Fehler zurückgegeben. Antwort: ${bodyText.slice(0,150)}` });
+      results.push({ tier: '1) Worker', ok:false, detail: isEn
+        ? `HTTP ${res.status} after ${ms}ms — worker reached, but returned an error. Response: ${bodyText.slice(0,150)}`
+        : `HTTP ${res.status} nach ${ms}ms — Worker erreicht, aber Fehler zurückgegeben. Antwort: ${bodyText.slice(0,150)}` });
     } else if(parsed && parsed.error){
-      results.push({ tier: '1) Worker', ok:false, detail:`Worker erreicht (${ms}ms), meldet aber: "${parsed.error}" — meist heißt das, der Sender selbst liefert keine ICY-Metadaten.` });
+      results.push({ tier: '1) Worker', ok:false, detail: isEn
+        ? `Worker reached (${ms}ms), but reports: "${parsed.error}" — usually means the station itself doesn't send ICY metadata.`
+        : `Worker erreicht (${ms}ms), meldet aber: "${parsed.error}" — meist heißt das, der Sender selbst liefert keine ICY-Metadaten.` });
     } else if(parsed && parsed.title){
-      results.push({ tier: '1) Worker', ok:true, detail:`OK nach ${ms}ms: "${parsed.title}"` });
+      results.push({ tier: '1) Worker', ok:true, detail: isEn
+        ? `OK after ${ms}ms: "${parsed.title}"`
+        : `OK nach ${ms}ms: "${parsed.title}"` });
     } else {
-      results.push({ tier: '1) Worker', ok:false, detail:`Antwort war kein gültiges JSON mit Titel (${ms}ms). Rohantwort: ${bodyText.slice(0,150)}` });
+      results.push({ tier: '1) Worker', ok:false, detail: isEn
+        ? `Response wasn't valid JSON with a title (${ms}ms). Raw response: ${bodyText.slice(0,150)}`
+        : `Antwort war kein gültiges JSON mit Titel (${ms}ms). Rohantwort: ${bodyText.slice(0,150)}` });
     }
   }catch(e){
     // A raw network-level failure here (TypeError: Failed to fetch, or a
     // SecurityError) most often means the request never left the device:
     // a Content-Security-Policy or a domain whitelist in the car's
     // browser container is blocking calls to workers.dev entirely.
-    results.push({ tier: '1) Worker', ok:false, detail:`Netzwerkfehler, Request kam nie an: "${e.message}". Typischer Grund: die Auto-Browser-Umgebung blockiert Verbindungen zu workers.dev (CSP/Domain-Whitelist) unabhängig vom normalen Internetzugang.` });
+    results.push({ tier: '1) Worker', ok:false, detail: isEn
+      ? `Network error, request never arrived: "${e.message}". Typical cause: the in-car browser environment blocks connections to workers.dev (CSP/domain whitelist) regardless of normal internet access.`
+      : `Netzwerkfehler, Request kam nie an: "${e.message}". Typischer Grund: die Auto-Browser-Umgebung blockiert Verbindungen zu workers.dev (CSP/Domain-Whitelist) unabhängig vom normalen Internetzugang.` });
   }
 
   // Tier 2: direct ICY
   try{
     const t0 = Date.now();
     const result = await fetchViaDirectIcy(streamUrl);
-    results.push({ tier: '2) Direkter Browser-Versuch', ok:true, detail:`OK nach ${Date.now()-t0}ms: "${result.title}"` });
+    results.push({ tier: isEn ? '2) Direct browser attempt' : '2) Direkter Browser-Versuch', ok:true, detail: (isEn ? `OK after ${Date.now()-t0}ms: "${result.title}"` : `OK nach ${Date.now()-t0}ms: "${result.title}"`) });
   }catch(e){
-    results.push({ tier: '2) Direkter Browser-Versuch', ok:false, detail: e.message });
+    results.push({ tier: isEn ? '2) Direct browser attempt' : '2) Direkter Browser-Versuch', ok:false, detail: e.message });
   }
 
   // Tier 3: status-json.xsl
   try{
     const t0 = Date.now();
     const result = await fetchViaStatusJson(streamUrl);
-    results.push({ tier: '3) status-json.xsl', ok:true, detail:`OK nach ${Date.now()-t0}ms: "${result.title}"` });
+    results.push({ tier: '3) status-json.xsl', ok:true, detail: (isEn ? `OK after ${Date.now()-t0}ms: "${result.title}"` : `OK nach ${Date.now()-t0}ms: "${result.title}"`) });
   }catch(e){
     results.push({ tier: '3) status-json.xsl', ok:false, detail: e.message });
   }

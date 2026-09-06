@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -16,10 +16,18 @@
       <span data-i18n="back">Zurück</span>
       <span class="appversion appversion--back" id="appVersionLabelBack"></span>
     </button>
-    <div class="apptitle" id="appTitle">Autoradio <span class="appversion" id="appVersionLabel"></span></div>
+    <div class="apptitle" id="appTitle">
+      <svg class="app-icon" viewBox="0 0 64 64" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="var(--accent)"/>
+        <line x1="43" y1="9" x2="35" y2="19" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <rect x="13" y="21" width="38" height="27" rx="7" fill="#fff"/>
+        <circle cx="24" cy="34.5" r="7" fill="var(--accent)"/>
+        <rect x="35" y="30" width="10" height="9" rx="3" fill="var(--accent)"/>
+      </svg>
+      <span>Autoradio <span class="appversion" id="appVersionLabel"></span></span>
+    </div>
     <div class="clock" id="clockBox">
       <span id="clockTime">--:--</span>
-      <span class="tz" data-i18n="hereLocal">Hier vor Ort</span>
     </div>
     <button class="settingsbtn" id="settingsBtn" aria-label="Einstellungen">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.55V21a2 2 0 01-4 0v-.09a1.7 1.7 0 00-1-1.55 1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.7 1.7 0 00.34-1.87 1.7 1.7 0 00-1.55-1H3a2 2 0 010-4h.09a1.7 1.7 0 001.55-1 1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06a1.7 1.7 0 001.87.34H9a1.7 1.7 0 001-1.55V3a2 2 0 014 0v.09a1.7 1.7 0 001 1.55 1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06a1.7 1.7 0 00-.34 1.87V9a1.7 1.7 0 001.55 1H21a2 2 0 010 4h-.09a1.7 1.7 0 00-1.55 1z"/></svg>
@@ -28,6 +36,7 @@
   <div class="header-progress-track" id="headerProgressTrack">
     <div class="header-progress-bar" id="headerProgressBar"></div>
   </div>
+  <div class="header-status-label" id="headerStatusLabel"></div>
 
   <!-- FULL-WIDTH PLAYER = PLAY/PAUSE BUTTON — sits between the clock and Favorites -->
   <div class="player" id="playerBar">
@@ -96,7 +105,19 @@
     <div class="panel">
       <div class="panel-header">
         <button class="closex" id="closeSettings" aria-label="Schließen">✕</button>
-        <h3 data-i18n="settings">Einstellungen</h3>
+        <div class="panel-header-title">
+          <svg class="app-icon" viewBox="0 0 64 64" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="var(--accent)"/>
+            <line x1="43" y1="9" x2="35" y2="19" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+            <rect x="13" y="21" width="38" height="27" rx="7" fill="#fff"/>
+            <circle cx="24" cy="34.5" r="7" fill="var(--accent)"/>
+            <rect x="35" y="30" width="10" height="9" rx="3" fill="var(--accent)"/>
+          </svg>
+          <div class="panel-header-text">
+            <h3 data-i18n="settings">Einstellungen</h3>
+            <div class="panel-header-sub">Autoradio <span id="aboutVersion"></span> · © 2026 Martin Werthammer</div>
+          </div>
+        </div>
       </div>
 
       <div class="panel-body">
@@ -138,21 +159,18 @@
           </div>
         </div>
 
-        <div class="row">
+        <div class="row row-wide">
           <span data-i18n="dataSource">Datenquelle</span>
-          <div class="seg-group" id="sourceSeg">
-            <button class="seg-btn" data-value="auto" data-i18n="sourceAuto">Automatisch</button>
-            <button class="seg-btn" data-value="eu" data-i18n="sourceEu">EU-Server</button>
+          <div class="row-inline">
+            <div class="seg-group" id="sourceSeg">
+              <button class="seg-btn" data-value="auto" data-i18n="sourceAuto">Automatisch</button>
+              <button class="seg-btn" data-value="eu" data-i18n="sourceEu">EU-Server</button>
+            </div>
+            <button class="seg-btn" id="npDiagnosticsBtn" data-i18n="npDiagnosticsRun">Test ausführen</button>
           </div>
         </div>
       </div>
-      <div class="source-note" data-i18n="sourceNote">Basiert auf der offenen Radio-Browser-Datenbank (aktuell die einzige community-gepflegte, wirklich offene Quelle; es gibt keine Server in Asien).</div>
-
-      <div class="section-label" data-i18n="npDiagnostics">Now-Playing Diagnose</div>
-      <div class="confirm-box">
-        <button class="seg-btn" id="npDiagnosticsBtn" data-i18n="npDiagnosticsRun">Test ausführen</button>
-        <div id="npDiagnosticsResult" class="diag-box" style="display:none;"></div>
-      </div>
+      <div id="npDiagnosticsResult" class="diag-box" style="display:none;"></div>
 
       <div class="section-label" data-i18n="addStream">Stream manuell hinzufügen</div>
       <div class="confirm-box">
@@ -172,7 +190,6 @@
         </div>
       </div>
 
-      <div class="about-line" style="text-align:center; margin-top:4px;">Autoradio <span id="aboutVersion"></span> · © 2026 Martin Werthammer</div>
       <div class="about-line" style="text-align:center; opacity:.7;">(coded with Claude.ai)</div>
       </div>
     </div>

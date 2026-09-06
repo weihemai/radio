@@ -10,7 +10,7 @@
    "About" section read it from here.
    ============================================================ */
 
-const APP_VERSION = '1.5.0';
+const APP_VERSION = '1.6.0';
 
 const STORAGE_KEYS = {
   favorites: 'autoradio_favorites',
@@ -303,11 +303,20 @@ document.getElementById('starBtn').addEventListener('click', (e)=>{
    Lives outside the scrollable content flow, so it never shifts
    the grid layout while loading.
    ============================================================ */
+function setLoadingStatus(text){
+  const el = document.getElementById('headerStatusLabel');
+  el.textContent = text;
+  el.classList.toggle('show', !!text);
+}
+
 async function withLoading(promiseOrValue){
   const track = document.getElementById('headerProgressTrack');
   const err = document.getElementById('errorBox');
   err.style.display = 'none';
   track.style.display = 'block';
+  setApiStatusListener((phase)=>{
+    setLoadingStatus(phase === 'connecting' ? t('connectingMsg') : t('connectedLoadingMsg'));
+  });
   try{
     const result = await promiseOrValue;
     track.style.display = 'none';
@@ -317,6 +326,9 @@ async function withLoading(promiseOrValue){
     err.style.display = 'block';
     err.textContent = t('loadError');
     throw e;
+  }finally{
+    setApiStatusListener(null);
+    setLoadingStatus('');
   }
 }
 
@@ -556,7 +568,7 @@ document.getElementById('searchInput').addEventListener('input', (e)=>{
   if(!q){ searchResults = []; renderSearchGrid(); return; }
   searchDebounce = setTimeout(async ()=>{
     try{
-      searchResults = await searchStations({ name:q, limit:100 });
+      searchResults = await withLoading(searchStations({ name:q, limit:100 }));
     }catch(err){
       searchResults = [];
     }
@@ -691,22 +703,37 @@ document.getElementById('clearFavsConfirm').addEventListener('click', ()=>{
 document.getElementById('npDiagnosticsBtn').addEventListener('click', async ()=>{
   const box = document.getElementById('npDiagnosticsResult');
   const btn = document.getElementById('npDiagnosticsBtn');
+  // Diagnostics text is hardcoded DE/EN (not routed through I18N/t()) —
+  // it's a developer-facing debug log, not core UI copy.
+  const isEn = currentLang === 'en';
   const testUrl = (currentStation && currentStation.url) || (favorites[0] && favorites[0].url);
   if(!testUrl){
     box.style.display = 'block';
-    box.textContent = 'Kein Sender ausgewählt und keine Favoriten vorhanden — erst einen Sender abspielen, dann testen.';
+    box.textContent = isEn
+      ? 'No station selected and no favorites available — play a station first, then test.'
+      : 'Kein Sender ausgewählt und keine Favoriten vorhanden — erst einen Sender abspielen, dann testen.';
     return;
   }
   btn.disabled = true;
   box.style.display = 'block';
-  box.textContent = 'Teste gegen: ' + testUrl + ' …';
+  const prompt = (isEn ? 'Testing against: ' : 'Teste gegen: ') + testUrl;
+  box.textContent = prompt + ' …';
   try{
     const results = await runNowPlayingDiagnostics(testUrl);
-    box.innerHTML = results.map(r =>
-      `<span class="${r.ok ? 'diag-ok' : 'diag-fail'}">${r.ok ? '✓' : '✗'} ${escapeHtml(r.tier)}</span>\n${escapeHtml(r.detail || '')}\n`
-    ).join('\n');
+    // results[0] is only the "is a worker URL configured?" sanity check,
+    // not an actual delivery attempt — skip it when picking the overall
+    // pass/fail so a config check doesn't get reported as "it worked".
+    const tiers = results.slice(1);
+    const success = tiers.find(r => r.ok);
+    if(success){
+      box.innerHTML = `${escapeHtml(prompt)} — <span class="diag-ok">✓ ${isEn ? 'OK' : 'OK'} (${escapeHtml(success.tier)})</span>`;
+    } else {
+      const last = tiers[tiers.length - 1];
+      const reason = (last && last.detail || '').slice(0, 80);
+      box.innerHTML = `${escapeHtml(prompt)} — <span class="diag-fail">✗ ${isEn ? 'Failed' : 'Fehlgeschlagen'}: ${escapeHtml(reason)}</span>`;
+    }
   }catch(e){
-    box.textContent = 'Diagnose fehlgeschlagen: ' + e.message;
+    box.textContent = (isEn ? 'Diagnostics failed: ' : 'Diagnose fehlgeschlagen: ') + e.message;
   }
   btn.disabled = false;
 });

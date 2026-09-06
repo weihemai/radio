@@ -1,6 +1,6 @@
 const I18N = {
   de: {
-    back:"Zurück", hereLocal:"Hier vor Ort", favorites:"Favoriten",
+    back:"Zurück", favorites:"Favoriten",
     language:"Sprache", allStations:"Alle Sender",
     country:"Land", recent:"Zuletzt gehört", search:"Suche",
     searchPlaceholder:"Sender suchen…", swipeHint:"↕ nach oben/unten wischen für mehr Sender",
@@ -17,11 +17,11 @@ const I18N = {
     clearFavs:"Alle Favoriten löschen", clearFavsConfirmMsg:"Wirklich alle Favoriten löschen?",
     cancel:"Abbrechen", confirmDelete:"Löschen",
     dataSource:"Datenquelle", sourceAuto:"Automatisch", sourceEu:"EU-Server",
-    sourceNote:"Basiert auf der offenen Radio-Browser-Datenbank (aktuell die einzige community-gepflegte, wirklich offene Quelle; es gibt keine Server in Asien).",
-    npDiagnostics:"Now-Playing Diagnose", npDiagnosticsRun:"Test ausführen"
+    npDiagnosticsRun:"Test ausführen",
+    connectingMsg:"Verbinde mit Server, bitte warten…", connectedLoadingMsg:"Verbunden, lade Daten…"
   },
   en: {
-    back:"Back", hereLocal:"Local time here", favorites:"Favorites",
+    back:"Back", favorites:"Favorites",
     language:"Language", allStations:"All Stations",
     country:"Country", recent:"Recently Played", search:"Search",
     searchPlaceholder:"Search station…", swipeHint:"↕ swipe up/down for more stations",
@@ -38,12 +38,12 @@ const I18N = {
     clearFavs:"Clear all favorites", clearFavsConfirmMsg:"Really delete all favorites?",
     cancel:"Cancel", confirmDelete:"Delete",
     dataSource:"Data source", sourceAuto:"Automatic", sourceEu:"EU servers",
-    sourceNote:"Powered by the open Radio-Browser database (currently the only community-run, truly open source; no servers exist in Asia).",
-    npDiagnostics:"Now-Playing diagnostics", npDiagnosticsRun:"Run test"
+    npDiagnosticsRun:"Run test",
+    connectingMsg:"Connecting to server, please wait.", connectedLoadingMsg:"Connected, loading data…"
   }
 };
 
-let currentLang = localStorage.getItem('autoradio_lang') || 'de';
+let currentLang = localStorage.getItem('autoradio_lang') || 'en';
 
 function t(key){
   return (I18N[currentLang] && I18N[currentLang][key]) || key;
