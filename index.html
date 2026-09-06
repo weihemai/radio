@@ -169,8 +169,26 @@
             <button class="seg-btn" id="npDiagnosticsBtn" data-i18n="npDiagnosticsRun">Test ausführen</button>
           </div>
         </div>
+
+        <div class="row">
+          <span data-i18n="chinaProxy">China-Zugriff</span>
+          <div class="seg-group" id="chinaProxySeg">
+            <button class="seg-btn" data-value="off" data-i18n="off">Aus</button>
+            <button class="seg-btn" data-value="on" data-i18n="on">An</button>
+          </div>
+        </div>
       </div>
       <div id="npDiagnosticsResult" class="diag-box" style="display:none;"></div>
+
+      <div class="section-label" data-i18n="proxyAuth">Proxy-Zugang (China-Fallback)</div>
+      <div class="confirm-box">
+        <div class="confirm-row">
+          <input type="text" id="proxyUser" data-i18n-placeholder="username" placeholder="Benutzername">
+          <input type="password" id="proxyPass" data-i18n-placeholder="password" placeholder="Passwort">
+        </div>
+        <button class="seg-btn" id="proxySaveBtn" data-i18n="save">Speichern</button>
+      </div>
+      <div class="about-line" data-i18n="credentialsNote">Zugangsdaten werden nur lokal auf diesem Gerät gespeichert, nie im App-Code.</div>
 
       <div class="section-label" data-i18n="addStream">Stream manuell hinzufügen</div>
       <div class="confirm-box">

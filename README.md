@@ -12,5 +12,10 @@ Being frustrated about my China EV (ONVO L60 2024 model) only offering Chinese U
 - Clock showing the local time / small clock in the player showing the station's local time (aaprox. by station country)
 - settings dialog with language, font size, source, dark mode etc.
 - all settings stored in local browser storage
+- optional China-Firewall fallback: if a station stream times out or
+  errors, the app can retry once through a small proxy service before
+  giving up (off by default, needs your own proxy credentials in Settings)
+
+See [CHANGELOG.md](CHANGELOG.md) for the version history.
 
 *Free to use and improve, but please quote the original source when forking.*

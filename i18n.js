@@ -18,7 +18,10 @@ const I18N = {
     cancel:"Abbrechen", confirmDelete:"Löschen",
     dataSource:"Datenquelle", sourceAuto:"Automatisch", sourceEu:"EU-Server",
     npDiagnosticsRun:"Test ausführen",
-    connectingMsg:"Verbinde mit Server, bitte warten…", connectedLoadingMsg:"Verbunden, lade Daten…"
+    connectingMsg:"Verbinde mit Server, bitte warten…", connectedLoadingMsg:"Verbunden, lade Daten…",
+    off:"Aus", on:"An", chinaProxy:"China-Zugriff", proxyAuth:"Proxy-Zugang (China-Fallback)",
+    username:"Benutzername", password:"Passwort", save:"Speichern",
+    credentialsNote:"Zugangsdaten werden nur lokal auf diesem Gerät gespeichert, nie im App-Code."
   },
   en: {
     back:"Back", favorites:"Favorites",
@@ -39,7 +42,10 @@ const I18N = {
     cancel:"Cancel", confirmDelete:"Delete",
     dataSource:"Data source", sourceAuto:"Automatic", sourceEu:"EU servers",
     npDiagnosticsRun:"Run test",
-    connectingMsg:"Connecting to server, please wait.", connectedLoadingMsg:"Connected, loading data…"
+    connectingMsg:"Connecting to server, please wait.", connectedLoadingMsg:"Connected, loading data…",
+    off:"Off", on:"On", chinaProxy:"China access", proxyAuth:"Proxy access (China fallback)",
+    username:"Username", password:"Password", save:"Save",
+    credentialsNote:"Credentials are only stored locally on this device, never in the app code."
   }
 };
 

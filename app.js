@@ -10,7 +10,7 @@
    "About" section read it from here.
    ============================================================ */
 
-const APP_VERSION = '1.6.0';
+const APP_VERSION = '1.7.0';
 
 const STORAGE_KEYS = {
   favorites: 'autoradio_favorites',
@@ -232,8 +232,42 @@ function setStatusError(text){
   else { el.textContent = ''; el.style.display = 'none'; }
 }
 
+// ---- China Great-Firewall fallback: only retried through the proxy if the
+// direct stream fails or never starts, and only when the user has opted in
+// via Settings (chinaProxySeg) — never the default path, to conserve the
+// proxy's tight Render.com bandwidth budget.
+const AUDIO_START_TIMEOUT_MS = 9000;
+let audioStartTimer = null;
+let proxyFallbackUuid = null; // uuid of the station currently loaded via the proxy, if any
+
+function chinaProxyEnabled(){
+  return localStorage.getItem('autoradio_china_proxy') === 'on';
+}
+function proxyStreamUrl(url){
+  const u = new URL(NOW_PLAYING_WORKER_URL + '/stream');
+  u.searchParams.set('url', url);
+  u.username = localStorage.getItem('autoradio_proxy_user') || '';
+  u.password = localStorage.getItem('autoradio_proxy_pass') || '';
+  return u.toString();
+}
+function attemptProxyFallback(station){
+  if(!chinaProxyEnabled() || proxyFallbackUuid === station.uuid){
+    // Either the user hasn't opted in, or the proxy attempt itself just
+    // failed/timed out too — give up and show the normal error.
+    hideLoadingSpinner();
+    setStatusError(t('unreachable'));
+    return;
+  }
+  proxyFallbackUuid = station.uuid;
+  audio.src = proxyStreamUrl(station.url);
+  audio.play().catch(()=>{}); // failure surfaces via the 'error' listener or the timer below
+  clearTimeout(audioStartTimer);
+  audioStartTimer = setTimeout(()=>attemptProxyFallback(station), AUDIO_START_TIMEOUT_MS);
+}
+
 function play(station){
   currentStation = station;
+  proxyFallbackUuid = null;
   document.getElementById('stationName').textContent = station.name;
   setStatusError(null);
   clearNowPlayingUI(station);
@@ -247,10 +281,13 @@ function play(station){
     hideLoadingSpinner();
     document.getElementById('playIcon').innerHTML = ICON_PAUSE;
     setMediaSessionPlaybackState('playing');
-  }).catch(()=>{
-    hideLoadingSpinner();
-    setStatusError(t('unreachable'));
-  });
+  }).catch(e=>console.warn('play() failed', e));
+  // Failure is detected via the 'error' listener below (and the timeout),
+  // not here — play() can also reject for reasons unrelated to the stream
+  // itself (e.g. an autoplay-policy block), which must not trigger a proxy
+  // fallback attempt.
+  clearTimeout(audioStartTimer);
+  audioStartTimer = setTimeout(()=>attemptProxyFallback(station), AUDIO_START_TIMEOUT_MS);
 
   updateStarBtn();
   tickClocks();
@@ -275,8 +312,12 @@ document.getElementById('playerBar').addEventListener('click', (e)=>{
   }
 });
 audio.addEventListener('waiting', showLoadingSpinner);
-audio.addEventListener('playing', hideLoadingSpinner);
-audio.addEventListener('error', ()=>{ hideLoadingSpinner(); setStatusError(t('unreachable')); });
+audio.addEventListener('playing', ()=>{ clearTimeout(audioStartTimer); hideLoadingSpinner(); });
+audio.addEventListener('error', ()=>{
+  clearTimeout(audioStartTimer);
+  if(currentStation) attemptProxyFallback(currentStation);
+  else { hideLoadingSpinner(); setStatusError(t('unreachable')); }
+});
 
 function setMediaSessionPlaybackState(state){
   if('mediaSession' in navigator){
@@ -665,7 +706,16 @@ wireSegGroup('themeSeg', 'autoradio_theme', 'system', (val)=>{
 wireSegGroup('accentSeg', 'autoradio_accent', 'green', applyAccent, '.swatch');
 wireSegGroup('fontSizeSeg', 'autoradio_fontsize', 'medium', applyFontSize);
 wireSegGroup('sourceSeg', 'autoradio_source', 'auto', applySource);
+wireSegGroup('chinaProxySeg', 'autoradio_china_proxy', 'off');
 wireSegGroup('langSeg', 'autoradio_lang', currentLang, (val)=> setLang(val));
+
+// stream-proxy credentials (China fallback) — localStorage-only, never in source.
+document.getElementById('proxyUser').value = localStorage.getItem('autoradio_proxy_user') || '';
+document.getElementById('proxyPass').value = localStorage.getItem('autoradio_proxy_pass') || '';
+document.getElementById('proxySaveBtn').addEventListener('click', ()=>{
+  localStorage.setItem('autoradio_proxy_user', document.getElementById('proxyUser').value.trim());
+  localStorage.setItem('autoradio_proxy_pass', document.getElementById('proxyPass').value);
+});
 
 function onLangChanged(){
   renderFavs();

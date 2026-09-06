@@ -180,6 +180,8 @@ html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--t
 .about-line{ font-size:13px; color:var(--text-dim); }
 .confirm-box{ display:flex; flex-direction:column; gap:8px; background:var(--tile); border-radius:12px; padding:12px; }
 .confirm-box input{ width:100%; padding:11px 13px; border-radius:9px; border:1px solid var(--line); background:var(--panel); color:var(--text); font-size:14px; }
+.confirm-row{ display:flex; gap:8px; }
+.confirm-row input{ flex:1; min-width:0; }
 .confirm-actions{ display:flex; gap:8px; }
 .confirm-actions button{ flex:1; }
 
