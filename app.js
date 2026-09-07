@@ -10,7 +10,7 @@
    "About" section read it from here.
    ============================================================ */
 
-const APP_VERSION = '1.7.1';
+const APP_VERSION = '1.7.2';
 
 const STORAGE_KEYS = {
   favorites: 'autoradio_favorites',
@@ -306,6 +306,14 @@ function play(station){
 document.getElementById('playerBar').addEventListener('click', (e)=>{
   if(e.target.closest('#starBtn')) return;
   if(!currentStation) return;
+  if(audio.error){
+    // A failed load leaves the element in an error state that .play()
+    // alone won't retry from — re-run play() so tapping the player again
+    // after "stream unavailable" actually tries again instead of doing
+    // nothing.
+    play(currentStation);
+    return;
+  }
   if(audio.paused){
     audio.play();
     document.getElementById('playIcon').innerHTML = ICON_PAUSE;

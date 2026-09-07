@@ -3,6 +3,21 @@
 All notable changes to Autoradio are documented here, newest first.
 Versions correspond to the `APP_VERSION` constant in `app.js`.
 
+## [1.7.2] - 2026-09-07
+
+- Fixed tapping the player again after "Stream unavailable" doing
+  nothing — a failed `<audio>` load doesn't retry on its own from
+  `.play()`; the player now re-runs `play()` from scratch when the
+  element is in an error state.
+- `nowplaying` service: removed the `WWW-Authenticate` header from
+  `/stream` 401 responses — sending it makes browsers (including in-car
+  WebViews) pop their own native login dialog on a failed `<audio>`
+  load, which the app has no control over. Auth is still required and
+  checked exactly as before.
+- `nowplaying` service: log upstream non-2xx statuses and connection
+  errors for `/stream`, so a real playback failure through the proxy is
+  now diagnosable from Render's logs instead of being a silent black box.
+
 ## [1.7.1] - 2026-09-07
 
 - Added a "PROXY" badge next to the station name in the player, shown
