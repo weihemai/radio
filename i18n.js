@@ -21,7 +21,9 @@ const I18N = {
     connectingMsg:"Verbinde mit Server, bitte warten…", connectedLoadingMsg:"Verbunden, lade Daten…",
     off:"Aus", on:"An", chinaProxy:"China-Zugriff", proxyAuth:"Proxy-Zugang (China-Fallback)",
     username:"Benutzername", password:"Passwort", save:"Speichern",
-    credentialsNote:"Zugangsdaten werden nur lokal auf diesem Gerät gespeichert, nie im App-Code."
+    credentialsNote:"Zugangsdaten werden nur lokal auf diesem Gerät gespeichert, nie im App-Code.",
+    testConnection:"Verbindung testen", testing:"Teste…", connectionOk:"Verbindung erfolgreich.",
+    proxyAuthFailed:"Zugangsdaten falsch (401).", proxyOriginBlocked:"Herkunft blockiert (403) — normal beim Testen außerhalb der echten App-Domain.", proxyRateLimited:"Zu viele Anfragen, bitte kurz warten (429)."
   },
   en: {
     back:"Back", favorites:"Favorites",
@@ -45,7 +47,9 @@ const I18N = {
     connectingMsg:"Connecting to server, please wait.", connectedLoadingMsg:"Connected, loading data…",
     off:"Off", on:"On", chinaProxy:"China access", proxyAuth:"Proxy access (China fallback)",
     username:"Username", password:"Password", save:"Save",
-    credentialsNote:"Credentials are only stored locally on this device, never in the app code."
+    credentialsNote:"Credentials are only stored locally on this device, never in the app code.",
+    testConnection:"Test connection", testing:"Testing…", connectionOk:"Connection successful.",
+    proxyAuthFailed:"Wrong credentials (401).", proxyOriginBlocked:"Origin blocked (403) — expected when testing outside the real app domain.", proxyRateLimited:"Too many requests, please wait a moment (429)."
   }
 };
 

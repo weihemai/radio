@@ -193,6 +193,7 @@ html,body{ margin:0; padding:0; height:100%; background:var(--bg); color:var(--t
 .player .art svg{ width:30px; height:30px; fill:#fff; }
 .player .meta{ flex:1; min-width:0; }
 .player .station{ font-size:calc(27px * var(--fs-mult)); font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.proxy-badge{ display:inline-block; margin-top:2px; font-size:11px; font-weight:800; letter-spacing:0.5px; color:var(--accent); border:1.5px solid var(--accent); border-radius:6px; padding:2px 7px; }
 .player .status{ font-size:calc(17px * var(--fs-mult)); color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .player .nowplaying{ font-size:calc(17px * var(--fs-mult)); color:var(--accent); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .player .localtime{ font-size:calc(15px * var(--fs-mult)); color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }

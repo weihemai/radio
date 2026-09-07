@@ -3,6 +3,16 @@
 All notable changes to Autoradio are documented here, newest first.
 Versions correspond to the `APP_VERSION` constant in `app.js`.
 
+## [1.7.1] - 2026-09-07
+
+- Added a "PROXY" badge next to the station name in the player, shown
+  whenever the current station is playing through the China fallback.
+- Added a "Test connection" button next to the proxy credentials fields.
+- Fixed the connection test itself: `fetch()` (unlike `<audio src>`)
+  refuses URLs with embedded credentials, so it now sends Basic Auth as a
+  real `Authorization` header — which also required adding `Authorization`
+  to the `nowplaying` service's CORS allow-list for the `/stream` route.
+
 ## [1.7.0] - 2026-09-07
 
 - Added an opt-in fallback for radio streams blocked by China's Great

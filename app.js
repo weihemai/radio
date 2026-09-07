@@ -10,7 +10,7 @@
    "About" section read it from here.
    ============================================================ */
 
-const APP_VERSION = '1.7.0';
+const APP_VERSION = '1.7.1';
 
 const STORAGE_KEYS = {
   favorites: 'autoradio_favorites',
@@ -250,15 +250,20 @@ function proxyStreamUrl(url){
   u.password = localStorage.getItem('autoradio_proxy_pass') || '';
   return u.toString();
 }
+function setProxyBadge(visible){
+  document.getElementById('proxyBadge').style.display = visible ? 'inline-block' : 'none';
+}
 function attemptProxyFallback(station){
   if(!chinaProxyEnabled() || proxyFallbackUuid === station.uuid){
     // Either the user hasn't opted in, or the proxy attempt itself just
     // failed/timed out too — give up and show the normal error.
     hideLoadingSpinner();
     setStatusError(t('unreachable'));
+    setProxyBadge(false);
     return;
   }
   proxyFallbackUuid = station.uuid;
+  setProxyBadge(true);
   audio.src = proxyStreamUrl(station.url);
   audio.play().catch(()=>{}); // failure surfaces via the 'error' listener or the timer below
   clearTimeout(audioStartTimer);
@@ -268,6 +273,7 @@ function attemptProxyFallback(station){
 function play(station){
   currentStation = station;
   proxyFallbackUuid = null;
+  setProxyBadge(false);
   document.getElementById('stationName').textContent = station.name;
   setStatusError(null);
   clearNowPlayingUI(station);
@@ -715,6 +721,33 @@ document.getElementById('proxyPass').value = localStorage.getItem('autoradio_pro
 document.getElementById('proxySaveBtn').addEventListener('click', ()=>{
   localStorage.setItem('autoradio_proxy_user', document.getElementById('proxyUser').value.trim());
   localStorage.setItem('autoradio_proxy_pass', document.getElementById('proxyPass').value);
+});
+document.getElementById('proxyTestBtn').addEventListener('click', async ()=>{
+  // Save first so the test uses whatever is currently typed in.
+  localStorage.setItem('autoradio_proxy_user', document.getElementById('proxyUser').value.trim());
+  localStorage.setItem('autoradio_proxy_pass', document.getElementById('proxyPass').value);
+  const status = document.getElementById('proxyStatus');
+  status.style.display = 'block';
+  status.textContent = t('testing');
+  try{
+    // fetch() (unlike <audio src>) refuses URLs with embedded credentials,
+    // so the test sends Basic Auth as a real header instead of userinfo.
+    const testUrl = NOW_PLAYING_WORKER_URL + '/stream?url=' + encodeURIComponent(PROXY_TEST_STREAM_URL);
+    const auth = 'Basic ' + btoa(`${localStorage.getItem('autoradio_proxy_user')||''}:${localStorage.getItem('autoradio_proxy_pass')||''}`);
+    const res = await fetch(testUrl, { headers: { Range: 'bytes=0-0', Authorization: auth } });
+    if(res.status === 401) status.innerHTML = `<span class="diag-fail">✗ ${t('proxyAuthFailed')}</span>`;
+    else if(res.status === 403) status.innerHTML = `<span class="diag-fail">✗ ${t('proxyOriginBlocked')}</span>`;
+    else if(res.status === 429) status.innerHTML = `<span class="diag-fail">✗ ${t('proxyRateLimited')}</span>`;
+    else if(res.ok) status.innerHTML = `<span class="diag-ok">✓ ${t('connectionOk')}</span>`;
+    else status.innerHTML = `<span class="diag-fail">✗ HTTP ${res.status}</span>`;
+  }catch(e){
+    // A CORS-origin mismatch throws here as a generic network-style error
+    // rather than a readable 403 — the browser hides the real response from
+    // JS for cross-origin failures, so this is the only place that case is
+    // visible, and it's the overwhelmingly likely cause when testing from
+    // anywhere other than the deployed app's own origin.
+    status.innerHTML = `<span class="diag-fail">✗ ${escapeHtml(e.message)} — ${t('proxyOriginBlocked')}</span>`;
+  }
 });
 
 function onLangChanged(){

@@ -22,6 +22,11 @@
 // after deploying autoradio-render-service, e.g.:
 // 'https://autoradio-nowplaying.onrender.com/'
 const NOW_PLAYING_WORKER_URL = 'https://nowplaying-660y.onrender.com';
+
+// A small, generally-reachable public stream used only to test whether the
+// /stream route's credentials/rate-limit/origin checks pass — not tied to
+// any particular station, since the test only needs *a* response.
+const PROXY_TEST_STREAM_URL = 'https://ice1.somafm.com/groovesalad-128-mp3';
 const NOW_PLAYING_POLL_MS = 20000;
 const NOW_PLAYING_TIMEOUT_MS = 6000;
 

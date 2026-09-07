@@ -43,6 +43,7 @@
     <div class="art" id="playerArt"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
     <div class="meta">
       <div class="station" id="stationName" data-i18n="pickStation">Sender wählen</div>
+      <span class="proxy-badge" id="proxyBadge" style="display:none">PROXY</span>
       <div class="nowplaying" id="nowPlaying" style="display:none;"></div>
       <div class="status" id="stationStatus" style="display:none;"></div>
       <div class="localtime" id="playerLocalTime" style="display:none;"></div>
@@ -186,7 +187,11 @@
           <input type="text" id="proxyUser" data-i18n-placeholder="username" placeholder="Benutzername">
           <input type="password" id="proxyPass" data-i18n-placeholder="password" placeholder="Passwort">
         </div>
-        <button class="seg-btn" id="proxySaveBtn" data-i18n="save">Speichern</button>
+        <div class="confirm-actions">
+          <button class="seg-btn" id="proxyTestBtn" data-i18n="testConnection">Verbindung testen</button>
+          <button class="seg-btn" id="proxySaveBtn" data-i18n="save">Speichern</button>
+        </div>
+        <div class="diag-box" id="proxyStatus" style="display:none"></div>
       </div>
       <div class="about-line" data-i18n="credentialsNote">Zugangsdaten werden nur lokal auf diesem Gerät gespeichert, nie im App-Code.</div>
 
