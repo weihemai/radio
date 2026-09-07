@@ -3,6 +3,26 @@
 All notable changes to Autoradio are documented here, newest first.
 Versions correspond to the `APP_VERSION` constant in `app.js`.
 
+## [1.7.3] - 2026-09-07
+
+- Fixed the China fallback never actually working: `<audio src="https://
+  user:pass@host/...">` (URL-embedded credentials) turns out to be
+  unreliable even on desktop Chrome for cross-origin loads — no
+  `Authorization` header ever reached the proxy, so every fallback
+  attempt was silently rejected with no trace in the logs. Switched to
+  plain `?user=&pass=` query-param credentials, which have no such
+  browser-dependent behavior; the `nowplaying` service now accepts
+  either that or a real `Authorization` header (still used by "Test
+  connection").
+- `nowplaying` service: added logging for the 401/403/429 rejection
+  paths (previously only logged failures *inside* the actual stream
+  fetch, so a request rejected before that point left zero trace).
+- `nowplaying` service: stopped pooling/reusing the upstream connection
+  for `/stream` (`agent: false`) — each stream is a long-lived,
+  high-bandwidth connection, and reusing a keep-alive socket across
+  requests was observed to corrupt the HTTP parsing of a subsequent
+  request.
+
 ## [1.7.2] - 2026-09-07
 
 - Fixed tapping the player again after "Stream unavailable" doing

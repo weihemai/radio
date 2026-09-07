@@ -10,7 +10,7 @@
    "About" section read it from here.
    ============================================================ */
 
-const APP_VERSION = '1.7.2';
+const APP_VERSION = '1.7.3';
 
 const STORAGE_KEYS = {
   favorites: 'autoradio_favorites',
@@ -246,8 +246,13 @@ function chinaProxyEnabled(){
 function proxyStreamUrl(url){
   const u = new URL(NOW_PLAYING_WORKER_URL + '/stream');
   u.searchParams.set('url', url);
-  u.username = localStorage.getItem('autoradio_proxy_user') || '';
-  u.password = localStorage.getItem('autoradio_proxy_pass') || '';
+  // Plain query params, not URL userinfo (https://user:pass@host/...):
+  // confirmed on desktop Chrome that <audio src> does not reliably send
+  // an Authorization header for embedded-credential URLs on cross-origin
+  // loads, so the proxy never even saw a request worth logging. Query
+  // params have no such browser-dependent behavior.
+  u.searchParams.set('user', localStorage.getItem('autoradio_proxy_user') || '');
+  u.searchParams.set('pass', localStorage.getItem('autoradio_proxy_pass') || '');
   return u.toString();
 }
 function setProxyBadge(visible){
@@ -738,11 +743,9 @@ document.getElementById('proxyTestBtn').addEventListener('click', async ()=>{
   status.style.display = 'block';
   status.textContent = t('testing');
   try{
-    // fetch() (unlike <audio src>) refuses URLs with embedded credentials,
-    // so the test sends Basic Auth as a real header instead of userinfo.
-    const testUrl = NOW_PLAYING_WORKER_URL + '/stream?url=' + encodeURIComponent(PROXY_TEST_STREAM_URL);
-    const auth = 'Basic ' + btoa(`${localStorage.getItem('autoradio_proxy_user')||''}:${localStorage.getItem('autoradio_proxy_pass')||''}`);
-    const res = await fetch(testUrl, { headers: { Range: 'bytes=0-0', Authorization: auth } });
+    // Uses the exact same URL shape (query-param credentials) as real
+    // playback, so this test actually exercises the real code path.
+    const res = await fetch(proxyStreamUrl(PROXY_TEST_STREAM_URL), { headers: { Range: 'bytes=0-0' } });
     if(res.status === 401) status.innerHTML = `<span class="diag-fail">✗ ${t('proxyAuthFailed')}</span>`;
     else if(res.status === 403) status.innerHTML = `<span class="diag-fail">✗ ${t('proxyOriginBlocked')}</span>`;
     else if(res.status === 429) status.innerHTML = `<span class="diag-fail">✗ ${t('proxyRateLimited')}</span>`;
